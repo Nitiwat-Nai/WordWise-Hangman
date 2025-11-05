@@ -676,7 +676,7 @@
         function shuffle(array) {
             for (let i = array.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
+                [array[i], array[j]] = array[j], array[i];
             }
         }
         
@@ -785,8 +785,7 @@
             currentWordIndex = 0;
             totalScore = 0;
 
-            showScreen('game-screen');
-            loadNextWord();
+            loadNextWord(); // loadNextWord จะเรียก showScreen('game-screen'); เอง
         }
         
         // โหลดคำศัพท์ต่อไปในคิว
@@ -797,6 +796,10 @@
                 return;
             }
 
+            // ************** FIX: เพิ่มการเรียกเปลี่ยนหน้าจอ **************
+            showScreen('game-screen'); 
+            // *************************************************************
+            
             // 1. Select the word
             currentWordDetails = wordQueue[currentWordIndex];
             currentWord = currentWordDetails.word.toUpperCase(); 
@@ -900,9 +903,7 @@
                  totalScore = 0;
                  currentCategory = randomCategoryName;
 
-                 showScreen('game-screen');
-                 loadNextWord();
-
+                 loadNextWord(); // loadNextWord จะเรียก showScreen('game-screen'); เอง
             });
             categorySelection.appendChild(randomBtn);
         }
