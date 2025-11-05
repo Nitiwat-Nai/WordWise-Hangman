@@ -550,7 +550,7 @@
             { word: "SHIRT", category: "สุ่ม 20 คำ (Random Mix)", descriptiveHint: "เสื้อสำหรับส่วนบนของร่างกาย มักมีคอปกและกระดุม", pos: "(N.)", example: "He wore a clean blue shirt." },
             { word: "PENCIL", category: "สุ่ม 20 คำ (Random Mix)", descriptiveHint: "เครื่องมือสำหรับเขียนหรือวาดที่มีไส้แกรไฟต์", pos: "(N.)", example: "Do you have a spare pencil I can borrow?" },
             { word: "CAMERA", category: "สุ่ม 20 คำ (Random Mix)", descriptiveHint: "อุปกรณ์ที่ใช้ในการถ่ายภาพหรือบันทึกวิดีโอ", pos: "(N.)", example: "She brought her new digital camera on the trip." },
-            { word: "JOURNEY", category: "สุ่ม 20 คำ (Random Mix)", descriptiveHint: "การเดินทางจากที่หนึ่งไปยังอีกที่หนึ่ง โดยเฉพาะการเดินทางที่ใช้เวลานาน", pos: "(N.)", example: "The train journey from London to Paris was long." },
+            { word: "JOURNEY", category: "สุ่ม 20 คำ (Random Mix)", descriptiveHint: "การเดินทางจากที่หนึ่งไปอีกที่หนึ่ง โดยเฉพาะการเดินทางที่ใช้เวลานาน", pos: "(N.)", example: "The train journey from London to Paris was long." },
             { word: "FRIEND", category: "สุ่ม 20 คำ (Random Mix)", descriptiveHint: "คนที่คุณรู้จักและชอบ โดยทั่วไปไม่ได้เป็นสมาชิกในครอบครัว", pos: "(N.)", example: "My best friend and I often go to the movies." },
             { word: "SILENCE", category: "สุ่ม 20 คำ (Random Mix)", descriptiveHint: "การไม่มีเสียงหรือความเงียบ", pos: "(N.)", example: "The deep silence of the night was calming." },
             { word: "PROBLEM", category: "สุ่ม 20 คำ (Random Mix)", descriptiveHint: "สถานการณ์ที่ยากลำบากหรือเป็นอุปสรรคที่ต้องแก้ไข", pos: "(N.)", example: "We need to find a solution to this financial problem." },
@@ -767,9 +767,6 @@
             window.speechSynthesis.cancel();
         }
 
-        // ----------------------------------------------------------------------
-        // ** ฟังก์ชันที่แก้ไข: เปลี่ยนหน้าจอทันทีเมื่อมีการกดปุ่มเลือกหมวดหมู่ **
-        // ----------------------------------------------------------------------
         function startSession(category) {
             currentCategory = category;
             
@@ -793,24 +790,17 @@
             currentWordIndex = 0;
             totalScore = 0;
             
-            // *************************************************************
-            // ** การแก้ไขที่สำคัญ: เปลี่ยนหน้าจอทันทีก่อนโหลดคำศัพท์ **
+            // การเปลี่ยนหน้าจอต้องอยู่ตรงนี้เสมอ
             showScreen('game-screen'); 
-            // *************************************************************
 
             loadNextWord(); 
         }
         
-        // ------------------------------------------------------------------
-        // ** ฟังก์ชันที่แก้ไข: ถูกเรียกใช้เพื่อโหลดคำศัพท์และอัปเดต UI เท่านั้น **
-        // ------------------------------------------------------------------
         function loadNextWord() {
             if (currentWordIndex >= wordQueue.length) {
                 endSession(); 
                 return;
             }
-
-            // (ลบ showScreen('game-screen'); ออกจากตรงนี้)
             
             // 1. Select the word
             currentWordDetails = wordQueue[currentWordIndex];
@@ -892,7 +882,7 @@
                 btn.className = 'main-btn';
                 btn.textContent = `${category} (${count} คำ)`;
                 btn.setAttribute('data-category', category);
-                // ** ส่วนสำคัญ: การเรียก startSession() เมื่อกดปุ่ม **
+                // ปุ่มหมวดหมู่ปกติ: ใช้ 'btn'
                 btn.addEventListener('click', () => startSession(category));
                 categorySelection.appendChild(btn);
             });
@@ -902,8 +892,10 @@
             const randomBtn = document.createElement('button');
             randomBtn.className = 'main-btn btn-random';
             randomBtn.textContent = `สุ่มคำศัพท์จากทุกหมวด (All Words Mix: ${wordData.length} คำ)`;
-            // ** แก้ไข: เรียก startSession ด้วยชื่อหมวดหมู่เสมือน **
+            
+            // *** แก้ไขบรรทัดนี้: ต้องใช้ randomBtn.addEventListener ไม่ใช่ btn.addEventListener ***
             randomBtn.addEventListener('click', () => startSession(randomCategoryName)); 
+            
             categorySelection.appendChild(randomBtn);
         }
 
@@ -931,21 +923,15 @@
             }
         });
         
-        // -------------------------------------------------------------
-        // ** ฟังก์ชันที่แก้ไข: จัดการการเปลี่ยนหน้าจอสำหรับ 'เล่นข้อต่อไป' **
-        // -------------------------------------------------------------
         restartBtn.addEventListener('click', () => {
              window.speechSynthesis.cancel();
              
-             // Move to the next word index *before* checking the limit
              currentWordIndex++; 
 
              if (currentWordIndex < wordQueue.length) {
-                 // Play next word
                  showScreen('game-screen'); // ต้องเรียกเพื่อกลับจาก end-screen
                  loadNextWord();
              } else {
-                 // End session, go back to start screen
                  endSession();
              }
         });
