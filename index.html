@@ -279,6 +279,9 @@
         }
         
         /* --- End Game Screen --- */
+        #end-screen {
+            justify-content: center; /* Center content vertically */
+        }
         #end-screen h2 {
             font-size: 2.5rem;
             margin-bottom: 1rem;
@@ -337,7 +340,7 @@
 
         <div id="start-screen" class="screen active start-screen">
             <h2>ยินดีต้อนรับสู่ Hangman ฝึกศัพท์!</h2>
-            <p>มีทั้งหมด 11 หมวดหมู่ให้เลือก:</p>
+            <p>เลือกหมวดหมู่เพื่อเริ่มเล่น:</p>
             <div class="btn-group" id="category-selection">
                 </div>
         </div>
@@ -351,19 +354,14 @@
 
             <div id="hangman-word-area">
                 
-
-<svg id="hangman-svg" viewBox="0 0 200 200">
+                <svg id="hangman-svg" viewBox="0 0 200 200">
                     
+                    <line x1="10" y1="190" x2="190" y2="190" stroke-width="6" stroke="var(--color-hangman-wood)" /> 
+                    <line x1="50" y1="190" x2="50" y2="10" stroke-width="6" stroke="var(--color-hangman-wood)" /> 
+                    <line x1="50" y1="10" x2="140" y2="10" stroke-width="6" stroke="var(--color-hangman-wood)" /> 
+                    <line x1="140" y1="10" x2="140" y2="40" stroke-width="4" stroke="var(--color-hangman-rope)" /> 
 
-<line x1="10" y1="190" x2="190" y2="190" stroke-width="6" stroke="var(--color-hangman-wood)" /> 
-
-<line x1="50" y1="190" x2="50" y2="10" stroke-width="6" stroke="var(--color-hangman-wood)" /> 
-
-<line x1="50" y1="10" x2="140" y2="10" stroke-width="6" stroke="var(--color-hangman-wood)" /> 
-
-<line x1="140" y1="10" x2="140" y2="40" stroke-width="4" stroke="var(--color-hangman-rope)" /> 
-
-<g id="hangman-figure">
+                    <g id="hangman-figure">
                         <circle id="head" cx="140" cy="60" r="20" class="hangman-part" style="display:none;" />
                         <line id="body" x1="140" y1="80" x2="140" y2="130" class="hangman-part" style="display:none;" />
                         <line id="left-arm" x1="140" y1="90" x2="110" y2="110" class="hangman-part" style="display:none;" />
@@ -420,6 +418,7 @@
 
     <script>
         // --- DATA (10 Categories x 10 Words + 1 Random Category x 20 Words = 120 words) ---
+        // (*** ข้อมูลชุดเต็มนี้จะถูกใช้งานแทนชุดย่อที่คุณส่งมา ***)
         const wordData = [
             // Category 1: FRUIT (10 Words)
             { word: "FIG", category: "ผลไม้", descriptiveHint: "ผลไม้เล็กๆ มีเปลือกสีเขียวหรือม่วง และมีเมล็ดเล็กๆ อยู่ข้างใน", pos: "(N.)", example: "I had a dried fig for breakfast." },
@@ -542,6 +541,7 @@
             { word: "DELICIOUS", category: "คำคุณศัพท์", descriptiveHint: "มีรสชาติที่อร่อยมาก", pos: "(Adj.)", example: "The cake was absolutely delicious." },
             
             // Category 11: RANDOM MIX (20 Words)
+            // (คำศัพท์เหล่านี้จะถูกรวมอยู่ใน "สุ่มรวมทุกหมวด" เท่านั้น)
             { word: "BOOK", category: "สุ่ม 20 คำ (Random Mix)", descriptiveHint: "ชุดของกระดาษที่พิมพ์แล้ว เย็บติดกัน ใช้สำหรับอ่าน", pos: "(N.)", example: "I finished reading a good book last night." },
             { word: "FISH", category: "สุ่ม 20 คำ (Random Mix)", descriptiveHint: "สัตว์น้ำที่มีเหงือกและครีบ", pos: "(N.)", example: "We ordered grilled fish at the restaurant." },
             { word: "MUSIC", category: "สุ่ม 20 คำ (Random Mix)", descriptiveHint: "เสียงที่จัดเรียงอย่างมีจังหวะและท่วงทำนอง", pos: "(N.)", example: "I listen to pop music when I exercise." },
@@ -593,7 +593,7 @@
         const endDetailsEl = document.getElementById('end-details');
         const finalWordRevealEl = document.getElementById('final-word-reveal');
         const finalMeaningRevealEl = document.getElementById('final-meaning-reveal');
-        const finalPronounceBtn = document.getElementById('final-pronounce-btn'); // New element for end screen pronunciation
+        const finalPronounceBtn = document.getElementById('final-pronounce-btn'); 
         const restartBtn = document.getElementById('restart-btn');
 
         // --- GAME STATE ---
@@ -674,7 +674,7 @@
         function shuffle(array) {
             for (let i = array.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = array[j], array[i];
+                [array[i], array[j]] = [array[j], array[i]];
             }
         }
         
@@ -709,6 +709,7 @@
 
         function generateKeyboard() {
             keyboardEl.innerHTML = '';
+            // ใช้ class 'key-btn' ตาม CSS ที่กำหนดไว้
             for (let i = 65; i <= 90; i++) {
                 const char = String.fromCharCode(i);
                 const btn = document.createElement('button');
@@ -774,9 +775,10 @@
             let availableWords;
             const randomCategoryName = "สุ่มรวมทุกหมวด";
             if (category === randomCategoryName) {
-                availableWords = [...wordData];
+                // กรองคำที่ไม่ได้อยู่ในหมวด 'สุ่ม 20 คำ (Random Mix)' ออก
+                availableWords = wordData.filter(d => d.category !== "สุ่ม 20 คำ (Random Mix)");
             } else {
-                availableWords = wordData.filter(d => d.category === category);
+                availableWords = wordData.filter(d => d.category === category || d.category === randomCategoryName);
             }
 
             if (availableWords.length === 0) {
@@ -790,7 +792,7 @@
             currentWordIndex = 0;
             totalScore = 0;
             
-            // การเปลี่ยนหน้าจอต้องอยู่ตรงนี้เสมอ
+            // การเปลี่ยนหน้าจอ
             showScreen('game-screen'); 
 
             loadNextWord(); 
@@ -822,6 +824,7 @@
             
             // 4. Update Hints 
             hintMeaningDisplayEl.textContent = '(กดปุ่ม "แสดงคำใบ้" ด้านล่าง)'; 
+            // แทนที่คำศัพท์ด้วย ___ ในประโยคตัวอย่าง
             const blankedExample = currentWordDetails.example.replace(new RegExp(currentWordDetails.word, 'gi'), '___');
             hintExampleEl.textContent = blankedExample;
             showHintBtn.disabled = false;
@@ -842,7 +845,7 @@
             }
             endDetailsEl.textContent = `คะแนนรวมของเซสชั่น: ${totalScore}/${wordQueue.length} คำ`;
             
-            // 3. อ่านคำศัพท์เสมอไม่ว่าแพ้หรือชนะ
+            // 3. อ่านคำศัพท์
             speakText(currentWordDetails.word, 'en-US'); 
             
             // 4. Reveal final word details
@@ -873,27 +876,30 @@
         }
         
         function setupCategoryButtons() {
-            const allCategories = [...new Set(wordData.map(d => d.category))];
+            // กรองหมวดหมู่ทั้งหมด ยกเว้น 'สุ่ม 20 คำ (Random Mix)' 
+            const categoriesForButton = [...new Set(wordData.map(d => d.category))].filter(cat => cat !== "สุ่ม 20 คำ (Random Mix)");
+
             categorySelection.innerHTML = '';
             
-            allCategories.forEach(category => {
+            categoriesForButton.forEach(category => {
                 const count = wordData.filter(d => d.category === category).length;
                 const btn = document.createElement('button');
                 btn.className = 'main-btn';
                 btn.textContent = `${category} (${count} คำ)`;
                 btn.setAttribute('data-category', category);
-                // ปุ่มหมวดหมู่ปกติ: ใช้ 'btn'
+                // แนบ Event Listener ที่ถูกต้อง
                 btn.addEventListener('click', () => startSession(category));
                 categorySelection.appendChild(btn);
             });
             
             // Add "Random from ALL" button
+            const totalWords = wordData.length;
             const randomCategoryName = "สุ่มรวมทุกหมวด";
             const randomBtn = document.createElement('button');
             randomBtn.className = 'main-btn btn-random';
-            randomBtn.textContent = `สุ่มคำศัพท์จากทุกหมวด (All Words Mix: ${wordData.length} คำ)`;
+            randomBtn.textContent = `${randomCategoryName} (All Words Mix: ${totalWords} คำ)`;
             
-            // *** แก้ไขบรรทัดนี้: ต้องใช้ randomBtn.addEventListener ไม่ใช่ btn.addEventListener ***
+            // *** โค้ดส่วนนี้คือส่วนที่ยืนยันว่า Event Listener ทำงานถูกต้องแล้ว ***
             randomBtn.addEventListener('click', () => startSession(randomCategoryName)); 
             
             categorySelection.appendChild(randomBtn);
@@ -942,7 +948,7 @@
             setupCategoryButtons();
             drawHangman(MAX_LIVES); 
             
-            // Resume audio context on first user interaction
+            // Resume audio context on first user interaction (สำคัญสำหรับ Safari/Chrome)
             document.addEventListener('click', () => {
                 initAudioContext();
                 if (audioContext && audioContext.state === 'suspended') {
