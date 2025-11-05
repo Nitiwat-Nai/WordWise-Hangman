@@ -58,7 +58,6 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
             margin-bottom: 1rem;
         }
-        /* 1. แก้ไข: นำ Version ออกจาก H1 */
         header h1 {
             font-size: 1.8rem;
             margin: 0;
@@ -187,17 +186,16 @@
             background-color: var(--color-hint-bg);
             border: 2px solid var(--color-hint-border);
             border-radius: 10px;
-            padding: 0.8rem 1rem; /* 5. แก้ไข: ยุบความสูงของกรอบสีเหลืองลง */
+            padding: 0.8rem 1rem;
             margin-bottom: 1.5rem;
             text-align: left;
             font-size: 0.95rem;
             color: var(--color-text-dark);
-            min-height: 80px; /* กำหนดความสูงขั้นต่ำให้ดูดี */
+            min-height: 80px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
         }
-        /* 5. แก้ไข: นำปุ่มฟังเสียงออก และจัดโครงสร้างใหม่ */
         .hint-item {
             margin-bottom: 0.5rem;
         }
@@ -218,7 +216,7 @@
             box-shadow: 0 3px 0 #FF9800;
             transition: transform 0.1s, box-shadow 0.1s;
             margin-top: 10px;
-            align-self: flex-start; /* จัดปุ่มให้อยู่ซ้ายสุด */
+            align-self: flex-start;
         }
         #show-hint-btn:active {
             transform: translateY(2px);
@@ -606,8 +604,8 @@
         let currentCategory = '';
         let totalScore = 0; // Correct words in this session
         
-        let wordQueue = []; // 4. แก้ไข: คิวคำศัพท์สำหรับเซสชั่นปัจจุบัน (กันซ้ำ)
-        let currentWordIndex = 0; // 4. แก้ไข: ดัชนีคำศัพท์ในคิว
+        let wordQueue = []; // คิวคำศัพท์สำหรับเซสชั่นปัจจุบัน (กันซ้ำ)
+        let currentWordIndex = 0; // ดัชนีคำศัพท์ในคิว
         let hintUsed = false; 
         
         // --- UTILITY (Audio & Speech) ---
@@ -788,15 +786,15 @@
             loadNextWord(); // loadNextWord จะเรียก showScreen('game-screen'); เอง
         }
         
-        // โหลดคำศัพท์ต่อไปในคิว
+        // โหลดคำศัพท์ต่อไปในคิว (ฟังก์ชันนี้มีการแก้ไขให้เรียก showScreen() แล้ว)
         function loadNextWord() {
             if (currentWordIndex >= wordQueue.length) {
-                // ควรถูกจัดการโดย restartBtn handler แต่ทำไว้เผื่อ
                 endSession(); 
                 return;
             }
 
-            // ************** FIX: เพิ่มการเรียกเปลี่ยนหน้าจอ **************
+            // *************************************************************
+            // ** บรรทัดสำคัญที่แก้ไขปัญหาการเปลี่ยนหน้าจอเมื่อกดปุ่ม Play Next **
             showScreen('game-screen'); 
             // *************************************************************
             
@@ -841,7 +839,7 @@
             }
             endDetailsEl.textContent = `คะแนนรวมของเซสชั่น: ${totalScore}/${wordQueue.length} คำ`;
             
-            // 3. แก้ไข: อ่านคำศัพท์เสมอไม่ว่าแพ้หรือชนะ
+            // 3. อ่านคำศัพท์เสมอไม่ว่าแพ้หรือชนะ
             speakText(currentWordDetails.word, 'en-US'); 
             
             // 4. Reveal final word details
@@ -852,10 +850,8 @@
             const hasNext = (currentWordIndex + 1) < wordQueue.length;
             
             if (hasNext) {
-                // 2. แก้ไข: เปลี่ยนปุ่มเป็น เล่นข้อต่อไป
                 restartBtn.textContent = `เล่นข้อต่อไป >> (${currentWordIndex + 1 + 1} / ${wordQueue.length})`;
             } else {
-                // 2. แก้ไข: เมื่อถึงคำสุดท้าย เปลี่ยนปุ่มเป็น จบเซสชั่น
                 restartBtn.textContent = "จบเซสชั่น / กลับหน้าหลัก";
             }
             
@@ -883,7 +879,7 @@
                 btn.className = 'main-btn';
                 btn.textContent = `${category} (${count} คำ)`;
                 btn.setAttribute('data-category', category);
-                // เปลี่ยนไปใช้ startSession
+                // ** ส่วนสำคัญ: การเรียก startSession() เมื่อกดปุ่ม **
                 btn.addEventListener('click', () => startSession(category));
                 categorySelection.appendChild(btn);
             });
@@ -895,7 +891,7 @@
             randomBtn.addEventListener('click', () => {
                  // สร้างหมวดหมู่เสมือนสำหรับ Random All
                  const randomCategoryName = "สุ่มรวมทุกหมวด";
-                 const sessionWords = [...wordData]; // ใช้คำศัพท์ทั้งหมด 120 คำ
+                 const sessionWords = [...wordData]; 
                  
                  wordQueue = sessionWords; 
                  shuffle(wordQueue);
@@ -911,7 +907,6 @@
 
         // --- EVENT LISTENERS ---
         
-        // Listener for the new End Screen Pronunciation Button
         finalPronounceBtn.addEventListener('click', () => {
             if (currentWordDetails && currentWordDetails.word) {
                 speakText(currentWordDetails.word, 'en-US');
@@ -933,7 +928,7 @@
             }
         });
         
-        // 2. แก้ไข: ปุ่มเล่นข้อต่อไป / เริ่มเกมใหม่
+        // ปุ่มเล่นข้อต่อไป / เริ่มเกมใหม่ (ที่แก้ปัญหาแล้ว)
         restartBtn.addEventListener('click', () => {
              window.speechSynthesis.cancel();
              
