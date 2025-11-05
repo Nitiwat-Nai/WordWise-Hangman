@@ -767,36 +767,50 @@
             window.speechSynthesis.cancel();
         }
 
-        // เริ่มต้นเซสชั่นใหม่ (เลือกหมวดหมู่)
+        // ----------------------------------------------------------------------
+        // ** ฟังก์ชันที่แก้ไข: เปลี่ยนหน้าจอทันทีเมื่อมีการกดปุ่มเลือกหมวดหมู่ **
+        // ----------------------------------------------------------------------
         function startSession(category) {
             currentCategory = category;
             
-            // 4. แก้ไข: กรอง, คัดลอก, และสุ่ม (shuffle) คำศัพท์สำหรับเซสชั่น
-            const availableWords = wordData.filter(d => d.category === category);
+            // 1. กรองคำศัพท์ตามหมวดหมู่ (รวมการจัดการ "สุ่มรวมทุกหมวด")
+            let availableWords;
+            const randomCategoryName = "สุ่มรวมทุกหมวด";
+            if (category === randomCategoryName) {
+                availableWords = [...wordData];
+            } else {
+                availableWords = wordData.filter(d => d.category === category);
+            }
+
             if (availableWords.length === 0) {
                 alert("No words available for this category!");
                 showScreen('start-screen');
                 return;
             }
+
             wordQueue = [...availableWords];
             shuffle(wordQueue);
             currentWordIndex = 0;
             totalScore = 0;
+            
+            // *************************************************************
+            // ** การแก้ไขที่สำคัญ: เปลี่ยนหน้าจอทันทีก่อนโหลดคำศัพท์ **
+            showScreen('game-screen'); 
+            // *************************************************************
 
-            loadNextWord(); // loadNextWord จะเรียก showScreen('game-screen'); เอง
+            loadNextWord(); 
         }
         
-        // โหลดคำศัพท์ต่อไปในคิว (ฟังก์ชันนี้มีการแก้ไขให้เรียก showScreen() แล้ว)
+        // ------------------------------------------------------------------
+        // ** ฟังก์ชันที่แก้ไข: ถูกเรียกใช้เพื่อโหลดคำศัพท์และอัปเดต UI เท่านั้น **
+        // ------------------------------------------------------------------
         function loadNextWord() {
             if (currentWordIndex >= wordQueue.length) {
                 endSession(); 
                 return;
             }
 
-            // *************************************************************
-            // ** บรรทัดสำคัญที่แก้ไขปัญหาการเปลี่ยนหน้าจอเมื่อกดปุ่ม Play Next **
-            showScreen('game-screen'); 
-            // *************************************************************
+            // (ลบ showScreen('game-screen'); ออกจากตรงนี้)
             
             // 1. Select the word
             currentWordDetails = wordQueue[currentWordIndex];
@@ -818,7 +832,6 @@
             
             // 4. Update Hints 
             hintMeaningDisplayEl.textContent = '(กดปุ่ม "แสดงคำใบ้" ด้านล่าง)'; 
-            // Replace the current word with blanks (case insensitive)
             const blankedExample = currentWordDetails.example.replace(new RegExp(currentWordDetails.word, 'gi'), '___');
             hintExampleEl.textContent = blankedExample;
             showHintBtn.disabled = false;
@@ -885,22 +898,12 @@
             });
             
             // Add "Random from ALL" button
+            const randomCategoryName = "สุ่มรวมทุกหมวด";
             const randomBtn = document.createElement('button');
             randomBtn.className = 'main-btn btn-random';
             randomBtn.textContent = `สุ่มคำศัพท์จากทุกหมวด (All Words Mix: ${wordData.length} คำ)`;
-            randomBtn.addEventListener('click', () => {
-                 // สร้างหมวดหมู่เสมือนสำหรับ Random All
-                 const randomCategoryName = "สุ่มรวมทุกหมวด";
-                 const sessionWords = [...wordData]; 
-                 
-                 wordQueue = sessionWords; 
-                 shuffle(wordQueue);
-                 currentWordIndex = 0;
-                 totalScore = 0;
-                 currentCategory = randomCategoryName;
-
-                 loadNextWord(); // loadNextWord จะเรียก showScreen('game-screen'); เอง
-            });
+            // ** แก้ไข: เรียก startSession ด้วยชื่อหมวดหมู่เสมือน **
+            randomBtn.addEventListener('click', () => startSession(randomCategoryName)); 
             categorySelection.appendChild(randomBtn);
         }
 
@@ -928,7 +931,9 @@
             }
         });
         
-        // ปุ่มเล่นข้อต่อไป / เริ่มเกมใหม่ (ที่แก้ปัญหาแล้ว)
+        // -------------------------------------------------------------
+        // ** ฟังก์ชันที่แก้ไข: จัดการการเปลี่ยนหน้าจอสำหรับ 'เล่นข้อต่อไป' **
+        // -------------------------------------------------------------
         restartBtn.addEventListener('click', () => {
              window.speechSynthesis.cancel();
              
@@ -937,6 +942,7 @@
 
              if (currentWordIndex < wordQueue.length) {
                  // Play next word
+                 showScreen('game-screen'); // ต้องเรียกเพื่อกลับจาก end-screen
                  loadNextWord();
              } else {
                  // End session, go back to start screen
