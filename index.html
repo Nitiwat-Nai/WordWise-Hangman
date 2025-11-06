@@ -368,8 +368,16 @@
                         <line id="right-arm" x1="140" y1="90" x2="170" y2="110" class="hangman-part" style="display:none;" />
                         <line id="left-leg" x1="140" y1="130" x2="120" y2="160" class="hangman-part" style="display:none;" />
                         <line id="right-leg" x1="140" y1="130" x2="160" y2="160" class="hangman-part" style="display:none;" />
-                        <circle id="left-eye" cx="132" cy="55" r="3" fill="var(--color-wrong)" style="display:none;" />
-                        <circle id="right-eye" cx="148" cy="55" r="3" fill="var(--color-wrong)" style="display:none;" />
+                        
+                        <g id="left-eye" class="hangman-part" style="display:none;">
+                            <line x1="128" y1="52" x2="136" y2="58" stroke="var(--color-wrong)" stroke-width="2"/>
+                            <line x1="128" y1="58" x2="136" y2="52" stroke="var(--color-wrong)" stroke-width="2"/>
+                        </g>
+                        <g id="right-eye" class="hangman-part" style="display:none;">
+                            <line x1="144" y1="52" x2="152" y2="58" stroke="var(--color-wrong)" stroke-width="2"/>
+                            <line x1="144" y1="58" x2="152" y2="52" stroke="var(--color-wrong)" stroke-width="2"/>
+                        </g>
+
                     </g>
                 </svg>
                 <div id="word-display">_ _ _ _ _</div>
@@ -418,7 +426,6 @@
 
     <script>
         // --- DATA (10 Categories x 10 Words + 1 Random Category x 20 Words = 120 words) ---
-        // (*** ข้อมูลชุดเต็มนี้จะถูกใช้งานแทนชุดย่อที่คุณส่งมา ***)
         const wordData = [
             // Category 1: FRUIT (10 Words)
             { word: "FIG", category: "ผลไม้", descriptiveHint: "ผลไม้เล็กๆ มีเปลือกสีเขียวหรือม่วง และมีเมล็ดเล็กๆ อยู่ข้างใน", pos: "(N.)", example: "I had a dried fig for breakfast." },
@@ -753,7 +760,22 @@
                 playFailTone();
                 
                 if (lives <= 0) {
-                    endGame(false); // Loss
+                    // *** MODIFICATION: เพิ่มการหน่วงเวลา 1 วินาที และปิดปุ่มทันทีเมื่อแพ้ ***
+                    
+                    // ปิดการใช้งานปุ่มทั้งหมดทันทีเพื่อรอการเปลี่ยนหน้าจอ
+                    keyboardEl.querySelectorAll('.key-btn').forEach(btn => btn.disabled = true);
+                    showHintBtn.disabled = true;
+                    giveUpBtn.disabled = true;
+
+                    // หน่วงเวลา 1 วินาทีเพื่อให้ผู้เล่นเห็นรูป Hangman ที่มี X-Eyes
+                    setTimeout(() => {
+                         // เปิดปุ่มยอมแพ้กลับมา (ถึงแม้จะถูกปิดเมื่อเปลี่ยนหน้าจออยู่แล้ว แต่ใส่ไว้เพื่อความปลอดภัย)
+                         giveUpBtn.disabled = false;
+                         endGame(false); // Loss
+                    }, 1000); // 1000 มิลลิวินาที = 1 วินาที
+                    
+                    return; // หยุดการทำงานของฟังก์ชันนี้เพื่อรอ setTimeout
+                    // *** สิ้นสุด MODIFICATION ***
                 }
             }
         }
@@ -862,6 +884,8 @@
             }
             
             // 6. Disable controls and show end screen
+            // ปุ่มถูกปิดไปแล้วใน handleGuess สำหรับกรณีแพ้ 
+            // สำหรับกรณีชนะ ให้ปิดปุ่มในหน้านี้
             keyboardEl.querySelectorAll('.key-btn').forEach(btn => btn.disabled = true);
             showHintBtn.disabled = true; 
             
@@ -870,6 +894,7 @@
 
         // จัดการเมื่อเซสชั่นจบ
         function endSession() {
+             window.speechSynthesis.cancel();
              wordQueue = []; 
              currentWordIndex = 0;
              showScreen('start-screen');
@@ -887,7 +912,6 @@
                 btn.className = 'main-btn';
                 btn.textContent = `${category} (${count} คำ)`;
                 btn.setAttribute('data-category', category);
-                // แนบ Event Listener ที่ถูกต้อง
                 btn.addEventListener('click', () => startSession(category));
                 categorySelection.appendChild(btn);
             });
@@ -899,7 +923,6 @@
             randomBtn.className = 'main-btn btn-random';
             randomBtn.textContent = `${randomCategoryName} (All Words Mix: ${totalWords} คำ)`;
             
-            // *** โค้ดส่วนนี้คือส่วนที่ยืนยันว่า Event Listener ทำงานถูกต้องแล้ว ***
             randomBtn.addEventListener('click', () => startSession(randomCategoryName)); 
             
             categorySelection.appendChild(randomBtn);
