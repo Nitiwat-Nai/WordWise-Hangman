@@ -54,9 +54,9 @@
         header {
             background-color: var(--color-hint-bg); 
             color: var(--color-primary);
-            padding: 1rem 1rem; /* ลดจาก 1.5rem */
+            padding: 1rem 1rem; 
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
-            margin-bottom: 0.5rem; /* ลดจาก 1rem */
+            margin-bottom: 0.5rem; 
         }
         header h1 {
             font-size: 1.8rem;
@@ -65,14 +65,13 @@
 
         /* Screen Management (ปรับลด Padding) */
         .screen {
-            padding: 0.5rem 1rem; /* ลด Top/Bottom จาก 1rem */
+            padding: 0.5rem 1rem; 
             display: none; 
             flex-grow: 1;
             flex-direction: column;
         }
         .screen.active {
             display: flex;
-            /* ใช้ justify-content: space-between เพื่อผลัก keyboard ไปด้านล่าง */
             justify-content: space-between;
         }
         
@@ -80,11 +79,11 @@
         .start-screen h2 {
             font-size: 2rem;
             color: var(--color-primary);
-            margin-bottom: 0.5rem; /* ลดจาก 1rem */
+            margin-bottom: 0.5rem; 
         }
         .start-screen p {
             font-size: 1.1rem;
-            margin-bottom: 1rem; /* ลดจาก 1.5rem */
+            margin-bottom: 1rem; 
             color: var(--color-text-dark);
         }
         .start-screen .btn-group {
@@ -93,7 +92,7 @@
             gap: 12px;
             width: 90%;
             max-width: 400px;
-            margin: 0 auto 0.5rem; /* ลด Margin-bottom จาก 1rem */
+            margin: 0 auto 0.5rem; 
             overflow-y: auto; 
             max-height: 60vh;
             padding: 0 5px;
@@ -128,7 +127,7 @@
             display: flex;
             justify-content: space-between;
             font-weight: bold;
-            margin-bottom: 1rem; /* ลดจาก 1.5rem */
+            margin-bottom: 1rem; 
             padding: 0 0.5rem;
             color: var(--color-text-dark);
         }
@@ -138,14 +137,14 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin-bottom: 0.5rem; /* ลดจาก 1rem */
-            padding: 0.5rem; /* ลดจาก 1rem */
+            margin-bottom: 0.5rem; 
+            padding: 0.5rem; 
         }
         
         #hangman-svg {
             width: 180px; 
             height: 180px; 
-            margin-bottom: 0.5rem; /* ลดจาก 1rem */
+            margin-bottom: 0.5rem; 
             overflow: visible; 
             background-color: #223040; 
             border-radius: 10px;
@@ -170,26 +169,28 @@
         }
 
 
+        /* คำขอ: ปรับขนาดเส้นขีดล่างให้เท่าความกว้างตัวอักษรพอดี */
         #word-display {
             font-size: 2.8rem; 
             font-weight: 900;
-            letter-spacing: 8px; 
-            margin-bottom: 0.5rem; /* ลดจาก 1rem */
+            /* ลบ letter-spacing ออกเพื่อให้ช่องว่างมาจากตัวอักษรและช่องว่างใน JS เท่านั้น */
+            /* letter-spacing: 8px; */ 
+            margin-bottom: 0.5rem; 
             color: var(--color-primary); 
             word-break: break-all;
         }
 
-        /* Hint Box (ปรับให้แคบลง) */
+        /* Hint Box */
         #hint-box {
             background-color: var(--color-hint-bg);
             border: 2px solid var(--color-hint-border);
             border-radius: 10px;
             padding: 0.8rem 1rem;
-            margin-bottom: 1rem; /* ลดจาก 1.5rem */
+            margin-bottom: 1rem; 
             text-align: left;
             font-size: 0.95rem;
             color: var(--color-text-dark);
-            min-height: 50px; /* ลดจาก 80px */
+            min-height: 50px; 
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -208,9 +209,9 @@
             background-color: #FFB74D; 
             color: var(--color-text-dark);
             border: none;
-            padding: 0.5rem 1rem; /* ลด Padding */
+            padding: 0.5rem 1rem; 
             border-radius: 8px;
-            font-size: 1rem; /* ลด Font Size */
+            font-size: 1rem; 
             font-weight: bold;
             cursor: pointer;
             box-shadow: 0 3px 0 #FF9800;
@@ -231,7 +232,7 @@
             font-style: italic;
             color: #BDC3C7; 
             min-height: 20px; 
-            display: none; /* ถูกซ่อนไว้ตอนแรก */
+            display: none; 
         }
         #hint-meaning-container {
              display: block;
@@ -242,7 +243,7 @@
             display: grid;
             grid-template-columns: repeat(7, 1fr);
             gap: 8px;
-            padding: 0 0.5rem 0.5rem; /* ลด Padding ด้านล่างจาก 1rem เป็น 0.5rem */
+            padding: 0 0.5rem 0.5rem; 
         }
 
         .key-btn {
@@ -282,12 +283,12 @@
         
         /* ปุ่มยอมแพ้ (ปรับลด Margin-top) */
         #give-up-btn {
-            margin-top: 0.5rem !important; /* ลดจาก 1rem */
+            margin-top: 0.5rem !important; 
         }
 
         /* --- End Game Screen --- */
         #end-screen {
-            justify-content: center; /* Center content vertically */
+            justify-content: center; 
         }
         #end-screen h2 {
             font-size: 2.5rem;
@@ -334,6 +335,13 @@
             box-shadow: 0 5px 0 #32A860;
             width: 80%;
             margin-top: 2rem;
+        }
+        /* New Back Home Button Style */
+        .btn-back-home {
+            background-color: #6A7A7B; 
+            box-shadow: 0 5px 0 #576364; 
+            width: 80%;
+            margin-top: 12px;
         }
 
     </style>
@@ -429,6 +437,9 @@
                 </div>
                 
                 <button id="restart-btn" class="main-btn btn-restart">โหลด...</button> 
+                <button id="back-home-btn" class="main-btn btn-back-home" style="margin-top: 12px;">
+                    กลับหน้าหลัก
+                </button>
             </div>
         </div>
     </div>
@@ -611,6 +622,8 @@
         const finalMeaningRevealEl = document.getElementById('final-meaning-reveal');
         const finalPronounceBtn = document.getElementById('final-pronounce-btn'); 
         const restartBtn = document.getElementById('restart-btn');
+        const backHomeBtn = document.getElementById('back-home-btn'); // NEW ELEMENT
+        
 
         // --- GAME STATE ---
         let lives = MAX_LIVES;
@@ -624,6 +637,8 @@
         let currentWordIndex = 0; // ดัชนีคำศัพท์ในคิว
         let hintUsed = false; 
         
+        let autoAdvanceTimeout; // NEW: Global timeout variable
+
         // --- UTILITY (Audio & Speech) ---
         let audioContext;
         let voices = [];
@@ -646,8 +661,14 @@
              return voices.find(v => v.lang.startsWith('en-US') && (v.name.includes('Samantha') || v.name.includes('Google US English'))) || voices.find(v => v.lang.startsWith('en')) || null;
         }
 
+        /**
+         * Function to speak text and return the utterance object for tracking
+         * @param {string} text 
+         * @param {string} lang 
+         * @returns {SpeechSynthesisUtterance | null}
+         */
         function speakText(text, lang) {
-            if (!'speechSynthesis' in window) return;
+            if (!('speechSynthesis' in window)) return null;
 
             window.speechSynthesis.cancel();
             const utterance = new SpeechSynthesisUtterance(text);
@@ -661,6 +682,7 @@
             }
 
             window.speechSynthesis.speak(utterance);
+            return utterance; // Return the object
         }
 
         function createTone(frequency, duration, type, volume = 0.5) {
@@ -713,12 +735,15 @@
             const normalizedWord = currentWord.toUpperCase();
             for (const letter of normalizedWord) {
                 if (revealFullWord || guessedLetters.has(letter)) {
-                    display += letter + ' ';
+                    // ใช้ตัวอักษรตามด้วยช่องว่าง
+                    display += letter + ' '; 
                 } else {
-                    display += '_ ';
+                    // ใช้ _ ตามด้วยช่องว่าง 
+                    display += '_ '; 
                     solved = false;
                 }
             }
+            // trim() เพื่อลบช่องว่างสุดท้าย
             wordDisplay.textContent = display.trim();
             return solved;
         }
@@ -758,6 +783,10 @@
                 playPing();
                 
                 if (solved) {
+                    // ปิดการใช้งานปุ่มทั้งหมดทันทีเพื่อรอการเปลี่ยนหน้าจอ
+                    keyboardEl.querySelectorAll('.key-btn').forEach(btn => btn.disabled = true);
+                    showHintBtn.disabled = true;
+                    giveUpBtn.disabled = true;
                     endGame(true); // Win
                 }
             } else {
@@ -773,10 +802,9 @@
                     keyboardEl.querySelectorAll('.key-btn').forEach(btn => btn.disabled = true);
                     showHintBtn.disabled = true;
                     giveUpBtn.disabled = true;
-
+                    
                     // หน่วงเวลา 1 วินาทีเพื่อให้ผู้เล่นเห็นรูป Hangman ที่มี X-Eyes
                     setTimeout(() => {
-                         giveUpBtn.disabled = false;
                          endGame(false); // Loss
                     }, 1000); 
                     
@@ -786,6 +814,13 @@
         }
         
         // --- GAME FLOW & UI ---
+        
+        function clearAutoAdvance() {
+             if (autoAdvanceTimeout) {
+                 clearTimeout(autoAdvanceTimeout);
+                 autoAdvanceTimeout = null;
+             }
+        }
 
         function showScreen(id) {
             document.querySelectorAll('.screen').forEach(screen => {
@@ -793,12 +828,52 @@
             });
             document.getElementById(id).classList.add('active');
             window.speechSynthesis.cancel();
+            clearAutoAdvance(); // Clear timeout whenever screen is changed
         }
+        
+        function startAutoAdvance(isWin) {
+             const hasNext = (currentWordIndex + 1) < wordQueue.length;
+             
+             if (isWin) {
+                // For Win Condition: Auto Advance / Auto Back Home
+                const utterance = speakText(currentWordDetails.word, 'en-US');
+                
+                if (utterance) {
+                    utterance.onend = () => {
+                         if (hasNext) {
+                             // Auto advance to next word
+                             autoAdvanceTimeout = setTimeout(() => {
+                                 restartBtn.click(); 
+                             }, 3000); 
+                         } else {
+                             // Auto back to home
+                             autoAdvanceTimeout = setTimeout(() => {
+                                 backHomeBtn.click(); 
+                             }, 3000); 
+                         }
+                    };
+                } else if (hasNext) {
+                    // Fallback if speech fails
+                    autoAdvanceTimeout = setTimeout(() => {
+                       restartBtn.click(); 
+                    }, 3000); 
+                } else {
+                    // If no next word and speech failed
+                    autoAdvanceTimeout = setTimeout(() => {
+                       backHomeBtn.click(); 
+                    }, 3000); 
+                }
+             } else {
+                 // For Loss Condition: Only speak once and stop
+                 speakText(currentWordDetails.word, 'en-US');
+             }
+        }
+
 
         function startSession(category) {
             currentCategory = category;
             
-            // 1. กรองคำศัพท์ตามหมวดหมู่ (รวมการจัดการ "สุ่มรวมทุกหมวด")
+            // 1. กรองคำศัพท์ตามหมวดหมู่
             let availableWords;
             const randomCategoryName = "สุ่มรวมทุกหมวด";
             if (category === randomCategoryName) {
@@ -849,7 +924,7 @@
             livesLeftEl.textContent = `โอกาส: ${lives}`;
             scoreEl.textContent = `คะแนน: ${totalScore}/${wordQueue.length}`;
             
-            // 4. Update Hints (ปรับการแสดงผลคำใบ้)
+            // 4. Update Hints 
             hintMeaningDisplayEl.textContent = currentWordDetails.descriptiveHint; 
             hintMeaningDisplayEl.style.display = 'none'; // ซ่อนข้อความ
             showHintBtn.style.display = 'inline-block'; // แสดงปุ่ม
@@ -858,6 +933,9 @@
             // แทนที่คำศัพท์ด้วย ___ ในประโยคตัวอย่าง
             const blankedExample = currentWordDetails.example.replace(new RegExp(currentWordDetails.word, 'gi'), '___');
             hintExampleEl.textContent = blankedExample;
+            
+            // 5. Enable buttons (Important for when restarting from End Screen)
+            giveUpBtn.disabled = false;
         }
 
         function endGame(isWin) {
@@ -875,34 +953,31 @@
             }
             endDetailsEl.textContent = `คะแนนรวมของเซสชั่น: ${totalScore}/${wordQueue.length} คำ`;
             
-            // 3. อ่านคำศัพท์
-            speakText(currentWordDetails.word, 'en-US'); 
-            
-            // 4. Reveal final word details
+            // 3. Reveal final word details
             finalWordRevealEl.textContent = currentWordDetails.word;
             finalMeaningRevealEl.innerHTML = `(${currentWordDetails.pos}) ${currentWordDetails.descriptiveHint}.<br>ตัวอย่าง: ${currentWordDetails.example}`; 
             
-            // 5. Check for next word / session end
+            // 4. Check for next word / session end
             const hasNext = (currentWordIndex + 1) < wordQueue.length;
             
             if (hasNext) {
                 restartBtn.textContent = `เล่นข้อต่อไป >> (${currentWordIndex + 1 + 1} / ${wordQueue.length})`;
+                backHomeBtn.style.display = 'block'; // Show back home button
             } else {
-                restartBtn.textContent = "จบเซสชั่น / กลับหน้าหลัก";
+                restartBtn.textContent = "กลับหน้าหลัก"; // Change text to back home
+                backHomeBtn.style.display = 'none'; // Hide the dedicated back home button
             }
             
-            // 6. Disable controls and show end screen
-            // ปุ่มถูกปิดไปแล้วใน handleGuess สำหรับกรณีแพ้ 
-            // สำหรับกรณีชนะ ให้ปิดปุ่มในหน้านี้
-            keyboardEl.querySelectorAll('.key-btn').forEach(btn => btn.disabled = true);
-            showHintBtn.disabled = true; 
-            
             showScreen('end-screen');
+
+            // 5. NEW: Auto Advance Logic (Start speaking and setting up the timer)
+            startAutoAdvance(isWin);
         }
 
         // จัดการเมื่อเซสชั่นจบ
         function endSession() {
              window.speechSynthesis.cancel();
+             clearAutoAdvance(); // Clear any running auto-advance timer
              wordQueue = []; 
              currentWordIndex = 0;
              showScreen('start-screen');
@@ -940,9 +1015,18 @@
         // --- EVENT LISTENERS ---
         
         finalPronounceBtn.addEventListener('click', () => {
-            if (currentWordDetails && currentWordDetails.word) {
-                speakText(currentWordDetails.word, 'en-US');
-            }
+             // Clear the current timer and re-speak
+             clearAutoAdvance(); 
+             if (currentWordDetails && currentWordDetails.word) {
+                 const utterance = speakText(currentWordDetails.word, 'en-US');
+                 
+                 // If it was a win, restart the timer after re-speaking
+                 if (endMessageEl.textContent.includes('ชนะ') && utterance) {
+                     utterance.onend = () => {
+                         startAutoAdvance(true);
+                     };
+                 }
+             }
         });
         
         showHintBtn.addEventListener('click', () => {
@@ -954,14 +1038,33 @@
             }
         });
 
+        // NEW LOGIC for Give Up Button (No confirm, full hangman, 1s delay)
         giveUpBtn.addEventListener('click', () => {
-            if (confirm("คุณแน่ใจหรือไม่ที่จะยอมแพ้? คะแนนเซสชั่นปัจจุบันจะถูกยกเลิก.")) {
-                endSession(); // Go back to start screen
-            }
+            // Show all parts immediately (full hangman - loss condition)
+            drawHangman(0); 
+            livesLeftEl.textContent = `โอกาส: 0`;
+            
+            // Disable buttons to prevent further interaction
+            keyboardEl.querySelectorAll('.key-btn').forEach(btn => btn.disabled = true);
+            showHintBtn.disabled = true;
+            giveUpBtn.disabled = true;
+
+            // Wait 1 second before going to the end screen/session end
+            setTimeout(() => {
+                // Technically it's a loss, but we skip the end screen and go to start.
+                endSession(); 
+            }, 1000); 
         });
         
+        // NEW: Back Home Button Listener
+        backHomeBtn.addEventListener('click', () => {
+            endSession();
+        });
+
+
         restartBtn.addEventListener('click', () => {
              window.speechSynthesis.cancel();
+             clearAutoAdvance(); // MUST clear the timeout
              
              currentWordIndex++; 
 
@@ -969,6 +1072,7 @@
                  showScreen('game-screen'); // ต้องเรียกเพื่อกลับจาก end-screen
                  loadNextWord();
              } else {
+                 // End of session, redirect to home
                  endSession();
              }
         });
