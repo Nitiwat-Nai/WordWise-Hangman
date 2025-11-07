@@ -169,6 +169,1152 @@
         }
 
 
+        /* 1. การแก้ไข: ปรับปรุงส่วนแสดงคำศัพท์ */
+        #word-display {
+            display: flex; /* ใช้ Flexbox เพื่อจัดเรียงตัวอักษรแนวนอน */
+            justify-content: center;
+            gap: 10px; /* ระยะห่างระหว่างตัวอักษร/ช่อง */
+            font-size: 2.8rem; 
+            font-weight: 900;
+            margin-bottom: 0.5rem; 
+            color: var(--color-primary); 
+            line-height: 1.2; /* กำหนดความสูงบรรทัดให้มีที่ว่างสำหรับเส้นขีดล่าง */
+        }
+        .letter-slot {
+            display: flex; /* ใช้ Flexbox ใน span เพื่อจัดตำแหน่งตัวอักษร */
+            justify-content: center;
+            align-items: flex-end; /* จัดตัวอักษรให้อยู่ตำแหน่งล่างสุดของช่อง */
+            width: 1.2ch; /* ***คีย์สำคัญ: กำหนดความกว้างของช่องให้เท่ากับ 1.2 เท่าของความกว้างตัวอักษร */
+            text-align: center;
+            box-sizing: border-box;
+            
+            /* *** การแก้ไขตามคำขอ: เพิ่ม padding-top เพื่อให้มีสเปซด้านบนตัวอักษรมากขึ้น *** */
+            padding-top: 15px; 
+            
+            padding-bottom: 5px; /* ระยะห่างระหว่างตัวอักษรกับเส้นขีดล่าง */
+        }
+        .letter-slot.placeholder {
+            /* สำหรับช่องที่ยังไม่ได้ตอบ (แสดงขีดล่าง) */
+            border-bottom: 5px solid var(--color-primary); 
+            color: transparent; /* ซ่อนเนื้อหา (ที่เป็นช่องว่าง) แต่แสดงเส้นขีดล่าง */
+            font-weight: 900;
+        }
+        .letter-slot:not(.placeholder) {
+             /* สำหรับช่องที่ตอบแล้ว (แสดงตัวอักษร) */
+             border-bottom: 5px solid transparent; /* เส้นขีดล่างใส เพื่อให้ความสูงของช่องเท่ากัน */
+        }
+        
+
+        /* Hint Box */
+        #hint-box {
+            background-color: var(--color-hint-bg);
+            border: 2px solid var(--color-hint-border);
+            border-radius: 10px;
+            padding: 0.8rem 1rem;
+            margin-bottom: 1rem; 
+            text-align: left;
+            font-size: 0.95rem;
+            color: var(--color-text-dark);
+            min-height: 50px; 
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .hint-item {
+            margin-bottom: 0.5rem;
+        }
+        .hint-label {
+            font-weight: bold;
+            color: var(--color-primary);
+            margin-right: 5px;
+        }
+
+        /* ปุ่มคำใบ้ที่ถูกย้ายเข้ามาในกล่องคำใบ้และถูกปรับให้เป็น Inline */
+        #show-hint-btn {
+            background-color: #FFB74D; 
+            color: var(--color-text-dark);
+            border: none;
+            padding: 0.5rem 1rem; 
+            border-radius: 8px;
+            font-size: 1rem; 
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 3px 0 #FF9800;
+            transition: transform 0.1s, box-shadow 0.1s;
+            display: inline-block;
+        }
+        #show-hint-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 1px 0 #FF9800;
+        }
+        #show-hint-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+        #hint-meaning-display {
+            font-style: italic;
+            color: #BDC3C7; 
+            min-height: 20px; 
+            display: none; 
+        }
+        #hint-meaning-container {
+             display: block;
+        }
+        
+        /* Keyboard (ลด Padding ด้านล่าง) */
+        #keyboard {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            padding: 0 0.5rem 0.5rem; 
+        }
+
+        .key-btn {
+            background-color: var(--color-secondary);
+            color: var(--color-text-light);
+            border: none;
+            padding: 0.7rem 0.2rem;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 3px 0 #3188d6;
+            transition: all 0.1s;
+        }
+
+        .key-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 1px 0 #3188d6;
+        }
+
+        .key-btn.correct {
+            background-color: var(--color-correct);
+            box-shadow: 0 3px 0 #32A860;
+        }
+
+        .key-btn.wrong {
+            background-color: var(--color-wrong);
+            box-shadow: 0 3px 0 #C62828;
+        }
+
+        .key-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+        
+        /* ปุ่มยอมแพ้ (ปรับลด Margin-top) */
+        #give-up-btn {
+            margin-top: 0.5rem !important; 
+        }
+
+        /* --- End Game Screen --- */
+        #end-screen {
+            justify-content: center; 
+        }
+        #end-screen h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        #end-screen p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+        #word-review {
+            text-align: left;
+            margin-top: 1rem;
+            background-color: var(--color-hint-bg);
+            border: 1px solid var(--color-hangman-wood);
+            padding: 1rem;
+            border-radius: 10px;
+        }
+        #word-review .word-result {
+            font-weight: bold;
+            font-size: 1.5rem;
+            color: var(--color-primary);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+        }
+        #word-review .meaning {
+             margin-left: 10px;
+             font-weight: normal;
+             font-size: 1.1rem;
+             color: var(--color-text-dark);
+        }
+        /* New button style for final pronounce */
+        .pronounce-final-btn {
+            background: none;
+            border: none;
+            color: var(--color-secondary);
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 1.8rem;
+            margin-left: 10px;
+        }
+        
+        /* 2. การแก้ไข: จัดปุ่มใน End Screen ให้อยู่ในแนวนอน */
+        .end-button-group {
+            display: flex;
+            justify-content: space-between; /* ใช้ space-between เพื่อแยกปุ่มออกจากกัน */
+            gap: 10px;
+            width: 100%; /* ใช้ความกว้างเต็มของคอนเทนเนอร์ End Screen */
+            max-width: 450px; 
+            margin: 2rem auto 0;
+            padding: 0 1rem;
+            box-sizing: border-box;
+        }
+        .btn-restart {
+            background-color: var(--color-primary);
+            box-shadow: 0 5px 0 #32A860;
+            width: 50%; /* ให้มีขนาดเท่ากัน */
+            margin-top: 0 !important; /* ยกเลิก margin-top เก่า */
+        }
+        .btn-back-home {
+            background-color: #6A7A7B; 
+            box-shadow: 0 5px 0 #576364; 
+            width: 50%; /* ให้มีขนาดเท่ากัน */
+            margin-top: 0 !important; /* ยกเลิก margin-top เก่า */
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container" id="main-container">
+        <header>
+            <h1>WordWise Hangman</h1>
+        </header>
+
+        <div id="start-screen" class="screen active start-screen">
+            <h2>ยินดีต้อนรับสู่ Hangman ฝึกศัพท์!</h2>
+            <p>เลือกหมวดหมู่เพื่อเริ่มเล่น:</p>
+            <div class="btn-group" id="category-selection">
+                </div>
+        </div>
+
+        <div id="game-screen" class="screen">
+            <div id="status-bar">
+                <span id="category-title">หมวดหมู่:</span>
+                <span id="lives-left">โอกาส: 8</span>
+                <span id="score">คะแนน: 0/0</span> 
+            </div>
+
+            <div id="hangman-word-area">
+                
+                <svg id="hangman-svg" viewBox="0 0 200 200">
+                    
+                    <line x1="10" y1="190" x2="190" y2="190" stroke-width="6" stroke="var(--color-hangman-wood)" /> 
+                    <line x1="50" y1="190" x2="50" y2="10" stroke-width="6" stroke="var(--color-hangman-wood)" /> 
+                    <line x1="50" y1="10" x2="140" y2="10" stroke-width="6" stroke="var(--color-hangman-wood)" /> 
+                    <line x1="140" y1="10" x2="140" y2="40" stroke-width="4" stroke="var(--color-hangman-rope)" /> 
+
+                    <g id="hangman-figure">
+                        <circle id="head" cx="140" cy="60" r="20" class="hangman-part" style="display:none;" />
+                        <line id="body" x1="140" y1="80" x2="140" y2="130" class="hangman-part" style="display:none;" />
+                        <line id="left-arm" x1="140" y1="90" x2="110" y2="110" class="hangman-part" style="display:none;" />
+                        <line id="right-arm" x1="140" y1="90" x2="170" y2="110" class="hangman-part" style="display:none;" />
+                        <line id="left-leg" x1="140" y1="130" x2="120" y2="160" class="hangman-part" style="display:none;" />
+                        <line id="right-leg" x1="140" y1="130" x2="160" y2="160" class="hangman-part" style="display:none;" />
+                        
+                        <g id="left-eye" class="hangman-part" style="display:none;">
+                            <line x1="128" y1="52" x2="136" y2="58" stroke="var(--color-wrong)" stroke-width="2"/>
+                            <line x1="128" y1="58" x2="136" y2="52" stroke="var(--color-wrong)" stroke-width="2"/>
+                        </g>
+                        <g id="right-eye" class="hangman-part" style="display:none;">
+                            <line x1="144" y1="52" x2="152" y2="58" stroke="var(--color-wrong)" stroke-width="2"/>
+                            <line x1="144" y1="58" x2="152" y2="52" stroke="var(--color-wrong)" stroke-width="2"/>
+                        </g>
+
+                    </g>
+                </svg>
+                <div id="word-display"></div>
+            </div>
+
+            <div id="hint-box">
+                <div class="hint-item" style="margin-bottom: 0.5rem;">
+                    <span class="hint-label">คำใบ้:</span> 
+                    <span id="hint-meaning-container" style="min-height: 20px; display: block;">
+                         <button id="show-hint-btn" class="hint-inline-btn">แสดงคำใบ้ (1 ครั้ง)</button>
+                        <span id="hint-meaning-display" style="font-style: italic; color: #BDC3C7; display:none;"></span>
+                    </span>
+                </div>
+                <div class="hint-item" id="example-sentence-container" style="margin-bottom: 0;">
+                    <span class="hint-label">ตัวอย่างประโยค:</span> 
+                    <span id="hint-example"></span>
+                </div>
+            </div>
+
+            <div id="keyboard">
+                </div>
+            
+            <button id="give-up-btn" class="main-btn" style="background-color: #7F8C8D; box-shadow: 0 5px 0 #6A7A7B; width: 100%; margin-top: 0.5rem;">
+                ยอมแพ้ / กลับหน้าหลัก
+            </button>
+        </div>
+        
+        <div id="end-screen" class="screen start-screen">
+            <div class="end-content">
+                <h2 id="end-message"></h2>
+                <p id="end-details"></p>
+                
+                <div id="word-review">
+                    <div class="word-result">
+                        คำศัพท์ที่ถูกต้องคือ: 
+                        <span id="final-word-reveal" class="meaning" style="font-size: 1.8rem; color: var(--color-primary);"></span>
+                        <button id="final-pronounce-btn" title="กดเพื่อฟังการออกเสียง" class="pronounce-final-btn">🔊</button>
+                    </div>
+                    <div class="word-result" style="color: var(--color-text-dark); margin-left: 0.5rem;">
+                        <span id="final-meaning-reveal" class="meaning" style="margin-left: 0;"></span>
+                    </div>
+                </div>
+                
+                <div class="end-button-group">
+                    <button id="restart-btn" class="main-btn btn-restart">โหลด...</button> 
+                    <button id="back-home-btn" class="main-btn btn-back-home">
+                        กลับหน้าหลัก
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- DATA (10 Categories x 10 Words + 1 Random Category x 20 Words = 120 words) ---
+        const wordData = [
+            // Category 1: FRUIT (10 Words)
+            { word: "FIG", category: "ผลไม้", descriptiveHint: "ผลไม้เล็กๆ มีเปลือกสีเขียวหรือม่วง และมีเมล็ดเล็กๆ อยู่ข้างใน", pos: "(N.)", example: "I had a dried fig for breakfast." },
+            { word: "LIME", category: "ผลไม้", descriptiveHint: "ผลไม้รสเปรี้ยว มีเปลือกสีเขียว มักใช้ผสมเครื่องดื่ม", pos: "(N.)", example: "She squeezed a fresh lime into her water." },
+            { word: "KIWI", category: "ผลไม้", descriptiveHint: "ผลไม้เล็กๆ มีขนปกคลุมข้างนอก เนื้อด้านในสีเขียวสดใส", pos: "(N.)", example: "A slice of kiwi is a great addition to the fruit salad." },
+            { word: "GRAPE", category: "ผลไม้", descriptiveHint: "ผลไม้ลูกเล็กๆ เป็นพวง มักใช้ในการผลิตไวน์", pos: "(N.)", example: "I bought a bunch of sweet green grape." },
+            { word: "MANGO", category: "ผลไม้", descriptiveHint: "ผลไม้เขตร้อนที่มีรสชาติหวานฉ่ำ เปลือกสีเหลืองหรือเขียว", pos: "(N.)", example: "A ripe mango is very sweet and juicy." },
+            { word: "APPLE", category: "ผลไม้", descriptiveHint: "ผลไม้สีแดงหรือเขียว ทรงกลม เป็นที่รู้จักกันดีว่ามีประโยชน์ต่อสุขภาพ", pos: "(N.)", example: "An apple a day keeps the doctor away." },
+            { word: "PEACH", category: "ผลไม้", descriptiveHint: "ผลไม้มีขนอ่อนๆ ปกคลุม มีเมล็ดขนาดใหญ่ตรงกลาง เนื้อสีส้มเหลือง", pos: "(N.)", example: "She took a bite of the soft, sweet peach." },
+            { word: "ORANGE", category: "ผลไม้", descriptiveHint: "ผลไม้รสหวานอมเปรี้ยว มีเปลือกสีส้ม และมีวิตามินซีสูง", pos: "(N.)", example: "Drinking orange juice is a good way to start the day." },
+            { word: "BANANA", category: "ผลไม้", descriptiveHint: "ผลไม้รูปร่างยาวโค้ง เปลือกสีเหลือง เป็นแหล่งพลังงานที่ดี", pos: "(N.)", example: "Monkeys love to eat a yellow banana." },
+            { word: "CHERRY", category: "ผลไม้", descriptiveHint: "ผลไม้เล็กๆ สีแดงสด รสชาติหวานหรือเปรี้ยว มักใช้ตกแต่งเค้ก", pos: "(N.)", example: "The cake was topped with a bright red cherry." },
+            
+            // Category 2: TRAVEL (10 Words)
+            { word: "BUS", category: "การเดินทาง", descriptiveHint: "ยานพาหนะขนาดใหญ่ที่ใช้ขนส่งผู้โดยสารในระยะทางสั้นๆ หรือในเมือง", pos: "(N.)", example: "I take the bus to work every morning." },
+            { word: "MAP", category: "การเดินทาง", descriptiveHint: "แผ่นภาพแสดงพื้นที่และเส้นทางภูมิศาสตร์ ใช้หาทิศทาง", pos: "(N.)", example: "We used a paper map to navigate the city." },
+            { word: "TRIP", category: "การเดินทาง", descriptiveHint: "การเดินทางสั้นๆ หรือการท่องเที่ยวพักผ่อน", pos: "(N.)", example: "We are planning a short weekend trip to the beach." },
+            { word: "BOAT", category: "การเดินทาง", descriptiveHint: "ยานพาหนะขนาดเล็กถึงกลางที่ลอยน้ำ ใช้เดินทางข้ามน้ำ", pos: "(N.)", example: "We rented a small boat for fishing on the lake." },
+            { word: "HOTEL", category: "การเดินทาง", descriptiveHint: "สถานที่ให้บริการห้องพักสำหรับนักเดินทางเพื่อพักค้างคืน", pos: "(N.)", example: "We stayed in a five-star hotel near the ocean." },
+            { word: "FLIGHT", category: "การเดินทาง", descriptiveHint: "การเดินทางจากที่หนึ่งไปอีกที่หนึ่งโดยใช้เครื่องบิน", pos: "(N.)", example: "Our flight was delayed due to bad weather." },
+            { word: "TICKET", category: "การเดินทาง", descriptiveHint: "เอกสารที่ให้สิทธิ์ในการเดินทาง, เข้าชม, หรือเข้าใช้บริการ", pos: "(N.)", example: "Don't forget your train ticket before you board." },
+            { word: "VOYAGE", category: "การเดินทาง", descriptiveHint: "การเดินทางไกลโดยเฉพาะทางทะเลหรือในอวกาศ", pos: "(N.)", example: "The ancient sailors began their long voyage across the sea." },
+            { word: "PASSPORT", category: "การเดินทาง", descriptiveHint: "เอกสารประจำตัวที่ออกให้โดยรัฐบาลสำหรับการเดินทางไปต่างประเทศ", pos: "(N.)", example: "You need your passport to cross the border." },
+            { word: "AIRPLANE", category: "การเดินทาง", descriptiveHint: "ยานพาหนะที่มีปีกและเครื่องยนต์ ใช้บินบนอากาศเพื่อขนส่งผู้คนหรือสิ่งของ", pos: "(N.)", example: "The large airplane took off from the runway." },
+
+            // Category 3: ABSTRACT CONCEPTS (10 Words)
+            { word: "IDEA", category: "แนวคิดนามธรรม", descriptiveHint: "ความคิดหรือแผนในใจ", pos: "(N.)", example: "That's a brilliant idea for the new project." },
+            { word: "HOPE", category: "แนวคิดนามธรรม", descriptiveHint: "ความรู้สึกอยากให้สิ่งที่ต้องการเกิดขึ้น", pos: "(N.)", example: "I hope that the weather will be nice tomorrow." },
+            { word: "FATE", category: "แนวคิดนามธรรม", descriptiveHint: "โชคชะตาหรือสิ่งที่ถูกกำหนดไว้แล้ว", pos: "(N.)", example: "Some people believe their fate is predetermined." },
+            { word: "GHOST", category: "แนวคิดนามธรรม", descriptiveHint: "วิญญาณของผู้ตายที่ปรากฏให้เห็น", pos: "(N.)", example: "They say the old mansion is haunted by a ghost." },
+            { word: "LOGIC", category: "แนวคิดนามธรรม", descriptiveHint: "หลักการหรือเหตุผลที่ใช้ในการคิดอย่างสมเหตุสมผล", pos: "(N.)", example: "You need to use clear logic to solve this puzzle." },
+            { word: "RHYTHM", category: "แนวคิดนามธรรม", descriptiveHint: "จังหวะหรือรูปแบบการเคลื่อนไหวที่สม่ำเสมอ", pos: "(N.)", example: "Can you feel the rhythm of the drum?" },
+            { word: "HONESTY", category: "แนวคิดนามธรรม", descriptiveHint: "คุณภาพของการพูดความจริงและการไม่หลอกลวง", pos: "(N.)", example: "Honesty is the best policy." },
+            { word: "COURAGE", category: "แนวคิดนามธรรม", descriptiveHint: "ความกล้าหาญในการเผชิญหน้ากับความกลัวหรืออันตราย", pos: "(N.)", example: "It takes great courage to admit you were wrong." },
+            { word: "PASSION", category: "แนวคิดนามธรรม", descriptiveHint: "ความรู้สึกรุนแรงของความรักหรือความสนใจในสิ่งใดสิ่งหนึ่ง", pos: "(N.)", example: "She has a strong passion for painting." },
+            { word: "KNOWLEDGE", category: "แนวคิดนามธรรม", descriptiveHint: "ข้อมูล ความเข้าใจ หรือทักษะที่ได้รับจากการศึกษาหรือประสบการณ์", pos: "(N.)", example: "Reading books can increase your knowledge." },
+            
+            // Category 4: ANIMALS (10 Words)
+            { word: "ANT", category: "สัตว์", descriptiveHint: "แมลงตัวเล็กที่อาศัยอยู่เป็นอาณานิคม มักพบในรังใต้ดิน", pos: "(N.)", example: "An ant can carry objects much heavier than itself." },
+            { word: "CUB", category: "สัตว์", descriptiveHint: "ลูกสัตว์ที่กินเนื้อ เช่น ลูกหมี ลูกสิงโต", pos: "(N.)", example: "The lion cub was playing near its mother." },
+            { word: "CAT", category: "สัตว์", descriptiveHint: "สัตว์เลี้ยงที่มีขนาดเล็ก ชอบล่าหนูและชอบนอนหลับ", pos: "(N.)", example: "The cat curled up on the sofa." },
+            { word: "DOG", category: "สัตว์", descriptiveHint: "สัตว์เลี้ยงที่ซื่อสัตย์ มักถูกเรียกว่าเพื่อนที่ดีที่สุดของมนุษย์", pos: "(N.)", example: "My dog barks loudly when the mailman arrives." },
+            { word: "WOLF", category: "สัตว์", descriptiveHint: "สัตว์กินเนื้อที่อยู่ในตระกูลสุนัข มักล่าเหยื่อเป็นฝูง", pos: "(N.)", example: "A lone wolf howled at the full moon." },
+            { word: "TIGER", category: "สัตว์", descriptiveHint: "สัตว์ตระกูลแมวที่มีขนาดใหญ่ที่สุด มีลายทางสีดำบนขนสีส้ม", pos: "(N.)", example: "The Bengal tiger is an endangered species." },
+            { word: "EAGLE", category: "สัตว์", descriptiveHint: "นกล่าเหยื่อขนาดใหญ่ มีสายตาที่เฉียบคมและกรงเล็บที่แข็งแรง", pos: "(N.)", example: "An eagle soared high above the mountains." },
+            { word: "ZEBRA", category: "สัตว์", descriptiveHint: "ม้าลายที่มีลายทางสีดำและขาวจากแอฟริกา", pos: "(N.)", example: "The zebra herd migrated across the plains." },
+            { word: "SNAKE", category: "สัตว์", descriptiveHint: "สัตว์เลื้อยคลานที่ไม่มีขา บางชนิดมีพิษ", pos: "(N.)", example: "Be careful when walking in the jungle; there might be a snake." },
+            { word: "ELEPHANT", category: "สัตว์", descriptiveHint: "สัตว์บกที่มีขนาดใหญ่ที่สุด มีงวงยาวและหูขนาดใหญ่", pos: "(N.)", example: "An elephant uses its trunk to drink water." },
+
+            // Category 5: FOOD & DRINK (10 Words)
+            { word: "PIE", category: "อาหารและเครื่องดื่ม", descriptiveHint: "ขนมอบที่มีไส้หวานหรือคาว ปกคลุมด้วยแป้งด้านบน", pos: "(N.)", example: "We shared a slice of apple pie." },
+            { word: "EGG", category: "อาหารและเครื่องดื่ม", descriptiveHint: "วัตถุดิบที่ได้จากไก่ มักใช้ทำอาหารเช้า", pos: "(N.)", example: "I like my egg scrambled." },
+            { word: "SOUP", category: "อาหารและเครื่องดื่ม", descriptiveHint: "อาหารเหลวที่ทำจากเนื้อสัตว์หรือผัก มักกินร้อนๆ", pos: "(N.)", example: "Hot chicken soup is comforting when you are sick." },
+            { word: "RICE", category: "อาหารและเครื่องดื่ม", descriptiveHint: "ธัญพืชหลักที่กินในหลายประเทศแถบเอเชีย", pos: "(N.)", example: "We ate fish and white rice for dinner." },
+            { word: "PASTA", category: "อาหารและเครื่องดื่ม", descriptiveHint: "อาหารหลักของอิตาลี มีหลายรูปทรง เช่น เส้นยาวหรือเกลียว", pos: "(N.)", example: "Spaghetti is a popular type of pasta." },
+            { word: "PIZZA", category: "อาหารและเครื่องดื่ม", descriptiveHint: "ขนมปังแผ่นกลมที่มีซอสมะเขือเทศและชีสอยู่ด้านบน", pos: "(N.)", example: "Let's order a large pizza for the party." },
+            { word: "NOODLE", category: "อาหารและเครื่องดื่ม", descriptiveHint: "อาหารที่เป็นเส้นยาว ทำจากแป้งข้าวเจ้าหรือแป้งสาลี", pos: "(N.)", example: "She prefers egg noodle to thin rice vermicelli." },
+            { word: "SALAD", category: "อาหารและเครื่องดื่ม", descriptiveHint: "จานที่ประกอบด้วยผักสดต่างๆ มักคลุกกับน้ำสลัด", pos: "(N.)", example: "I ordered a fresh green salad with grilled chicken." },
+            { word: "WAFFLE", category: "อาหารและเครื่องดื่ม", descriptiveHint: "ขนมปังแผ่นกรอบที่มีลวดลายเป็นช่องสี่เหลี่ยม มักกินกับน้ำผึ้ง", pos: "(N.)", example: "I had a Belgian waffle topped with strawberries." },
+            { word: "BROCCOLI", category: "อาหารและเครื่องดื่ม", descriptiveHint: "ผักสีเขียวที่มีก้านหนาและหัวคล้ายต้นไม้เล็กๆ", pos: "(N.)", example: "Steamed broccoli is a healthy side dish." },
+
+            // Category 6: NATURE & GEOGRAPHY (10 Words)
+            { word: "SUN", category: "ธรรมชาติและภูมิศาสตร์", descriptiveHint: "ดาวฤกษ์ที่ให้แสงและความร้อนแก่โลก", pos: "(N.)", example: "The sun rose in the east." },
+            { word: "RAIN", category: "ธรรมชาติและภูมิศาสตร์", descriptiveHint: "น้ำที่ตกลงมาจากเมฆเป็นหยดๆ", pos: "(N.)", example: "I hope the rain stops before we leave." },
+            { word: "FOG", category: "ธรรมชาติและภูมิศาสตร์", descriptiveHint: "เมฆที่เกิดขึ้นในระดับพื้นดิน ทำให้ทัศนวิสัยลดลง", pos: "(N.)", example: "The thick fog made it hard to drive." },
+            { word: "WIND", category: "ธรรมชาติและภูมิศาสตร์", descriptiveHint: "อากาศที่เคลื่อนที่อย่างรวดเร็ว", pos: "(N.)", example: "The strong wind blew the leaves off the trees." },
+            { word: "RIVER", category: "ธรรมชาติและภูมิศาสตร์", descriptiveHint: "กระแสน้ำขนาดใหญ่ที่ไหลลงสู่ทะเลหรือทะเลสาบ", pos: "(N.)", example: "The town is located by the river." },
+            { word: "OCEAN", category: "ธรรมชาติและภูมิศาสตร์", descriptiveHint: "พื้นที่ขนาดใหญ่ของน้ำเค็มที่ปกคลุมโลก", pos: "(N.)", example: "The Pacific ocean is the largest in the world." },
+            { word: "FOREST", category: "ธรรมชาติและภูมิศาสตร์", descriptiveHint: "พื้นที่ขนาดใหญ่ที่เต็มไปด้วยต้นไม้หนาแน่น", pos: "(N.)", example: "We went hiking deep into the forest." },
+            { word: "MOUNTAIN", category: "ธรรมชาติและภูมิศาสตร์", descriptiveHint: "เนินสูงขนาดใหญ่บนโลก ที่สูงกว่าภูเขา", pos: "(N.)", example: "Mount Everest is the tallest mountain." },
+            { word: "LIGHTNING", category: "ธรรมชาติและภูมิศาสตร์", descriptiveHint: "ประกายไฟฟ้าสว่างจ้าที่เกิดขึ้นระหว่างพายุฝนฟ้าคะนอง", pos: "(N.)", example: "We saw a flash of lightning followed by thunder." },
+            { word: "VOLCANO", category: "ธรรมชาติและภูมิศาสตร์", descriptiveHint: "ภูเขาที่มีรูเปิดให้แมกมาและก๊าซพุ่งออกมา", pos: "(N.)", example: "The dormant volcano could erupt anytime." },
+
+            // Category 7: HOME & FURNITURE (10 Words)
+            { word: "BED", category: "บ้านและเฟอร์นิเจอร์", descriptiveHint: "เฟอร์นิเจอร์ที่ใช้นอนหลับพักผ่อน", pos: "(N.)", example: "I was so tired I fell asleep instantly on the bed." },
+            { word: "DOOR", category: "บ้านและเฟอร์นิเจอร์", descriptiveHint: "ช่องทางเข้าออกอาคารหรือห้อง", pos: "(N.)", example: "Please close the door quietly behind you." },
+            { word: "DESK", category: "บ้านและเฟอร์นิเจอร์", descriptiveHint: "โต๊ะที่ใช้อ่าน เขียน หรือทำงาน", pos: "(N.)", example: "He keeps his computer on his office desk." },
+            { word: "CHAIR", category: "บ้านและเฟอร์นิเจอร์", descriptiveHint: "เฟอร์นิเจอร์สำหรับนั่งที่มีพนักพิง", pos: "(N.)", example: "Take a seat in that comfortable chair." },
+            { word: "SOFA", category: "บ้านและเฟอร์นิเจอร์", descriptiveHint: "ที่นั่งยาวนุ่มสำหรับหลายคน มักวางในห้องนั่งเล่น", pos: "(N.)", example: "The whole family can fit on the new sofa." },
+            { word: "TABLE", category: "บ้านและเฟอร์นิเจอร์", descriptiveHint: "เฟอร์นิเจอร์ที่มีพื้นผิวเรียบและมีขา มักใช้กินอาหาร", pos: "(N.)", example: "Set the table for dinner." },
+            { word: "WINDOW", category: "บ้านและเฟอร์นิเจอร์", descriptiveHint: "ช่องกระจกที่มองเห็นภายนอกได้ ใช้ระบายอากาศและรับแสง", pos: "(N.)", example: "Open the window to let in some fresh air." },
+            { word: "KITCHEN", category: "บ้านและเฟอร์นิเจอร์", descriptiveHint: "ห้องที่ใช้เตรียมและปรุงอาหาร", pos: "(N.)", example: "She spends a lot of time cooking in the kitchen." },
+            { word: "BALCONY", category: "บ้านและเฟอร์นิเจอร์", descriptiveHint: "พื้นที่ยื่นออกมาจากผนังอาคาร มักอยู่ชั้นบน", pos: "(N.)", example: "We sat on the balcony enjoying the sunset." },
+            { word: "TELEVISION", category: "บ้านและเฟอร์นิเจอร์", descriptiveHint: "อุปกรณ์อิเล็กทรอนิกส์ที่แสดงภาพและเสียง", pos: "(N.)", example: "We watched the news on the television." },
+
+            // Category 8: HUMAN BODY (10 Words)
+            { word: "EAR", category: "ร่างกายมนุษย์", descriptiveHint: "อวัยวะที่ใช้ในการได้ยิน", pos: "(N.)", example: "He whispered the secret into my ear." },
+            { word: "EYE", category: "ร่างกายมนุษย์", descriptiveHint: "อวัยวะที่ใช้ในการมองเห็น", pos: "(N.)", example: "She has blue eye." },
+            { word: "NOSE", category: "ร่างกายมนุษย์", descriptiveHint: "อวัยวะที่ใช้ในการดมกลิ่นและหายใจ", pos: "(N.)", example: "The dog tracked the scent with its nose." },
+            { word: "HAND", category: "ร่างกายมนุษย์", descriptiveHint: "ส่วนปลายของแขนที่ใช้จับและถือสิ่งของ", pos: "(N.)", example: "Shake my hand to seal the deal." },
+            { word: "HEART", category: "ร่างกายมนุษย์", descriptiveHint: "อวัยวะที่สูบฉีดเลือดไปทั่วร่างกาย", pos: "(N.)", example: "The doctor listened to the patient's heart." },
+            { word: "BRAIN", category: "ร่างกายมนุษย์", descriptiveHint: "อวัยวะหลักของการคิด การเรียนรู้ และความจำ", pos: "(N.)", example: "The human brain is highly complex." },
+            { word: "STOMACH", category: "ร่างกายมนุษย์", descriptiveHint: "อวัยวะที่ย่อยอาหารที่เรากินเข้าไป", pos: "(N.)", example: "My stomach hurts because I ate too much." },
+            { word: "THUMB", category: "ร่างกายมนุษย์", descriptiveHint: "นิ้วที่ใหญ่ที่สุดและสั้นที่สุดบนมือ", pos: "(N.)", example: "You should give this movie a thumb up." },
+            { word: "LUNGS", category: "ร่างกายมนุษย์", descriptiveHint: "อวัยวะที่ใช้ในการหายใจและนำออกซิเจนเข้าสู่เลือด", pos: "(N.)", example: "Smoking is bad for your lungs." },
+            { word: "SHOULDER", category: "ร่างกายมนุษย์", descriptiveHint: "ส่วนของร่างกายที่เชื่อมต่อแขนกับลำตัว", pos: "(N.)", example: "He tapped me on the shoulder." },
+
+            // Category 9: JOBS & PROFESSIONS (10 Words)
+            { word: "CHEF", category: "อาชีพ", descriptiveHint: "หัวหน้าพ่อครัวมืออาชีพในร้านอาหาร", pos: "(N.)", example: "The restaurant hired a famous chef." },
+            { word: "JUDGE", category: "อาชีพ", descriptiveHint: "เจ้าหน้าที่สาธารณะที่มีอำนาจตัดสินคดีในศาล", pos: "(N.)", example: "The judge declared the defendant guilty." },
+            { word: "PILOT", category: "อาชีพ", descriptiveHint: "ผู้ที่บังคับเครื่องบิน", pos: "(N.)", example: "The pilot safely landed the plane in the storm." },
+            { word: "NURSE", category: "อาชีพ", descriptiveHint: "ผู้ที่ดูแลผู้ป่วยในโรงพยาบาล มักใส่ชุดสีขาว", pos: "(N.)", example: "The kind nurse gave me my medication." },
+            { word: "DOCTOR", category: "อาชีพ", descriptiveHint: "ผู้ที่รักษาอาการเจ็บป่วยและบาดเจ็บ", pos: "(N.)", example: "I went to see the doctor about my fever." },
+            { word: "ACTOR", category: "อาชีพ", descriptiveHint: "ผู้ที่แสดงบทบาทในภาพยนตร์ ละคร หรือเวที", pos: "(N.)", example: "He dreams of becoming a famous movie actor." },
+            { word: "FARMER", category: "อาชีพ", descriptiveHint: "ผู้ที่เลี้ยงสัตว์และปลูกพืชเพื่อการเกษตร", pos: "(N.)", example: "The farmer harvested the corn in the field." },
+            { word: "TEACHER", category: "อาชีพ", descriptiveHint: "ผู้ที่ให้ความรู้และฝึกฝนนักเรียน", pos: "(N.)", example: "My favorite teacher taught us about history." },
+            { word: "ENGINEER", category: "อาชีพ", descriptiveHint: "ผู้ที่ออกแบบ สร้าง หรือบำรุงรักษาเครื่องจักรหรือโครงสร้าง", pos: "(N.)", example: "A civil engineer designed this bridge." },
+            { word: "ARCHITECT", category: "อาชีพ", descriptiveHint: "ผู้ที่ออกแบบอาคารและสิ่งก่อสร้าง", pos: "(N.)", example: "The architect showed us the blueprints for the new library." },
+
+            // Category 10: ADJECTIVES (10 Words)
+            { word: "BIG", category: "คำคุณศัพท์", descriptiveHint: "มีขนาดใหญ่ ตรงข้ามกับเล็ก", pos: "(Adj.)", example: "That is a very big house." },
+            { word: "WET", category: "คำคุณศัพท์", descriptiveHint: "ปกคลุมหรือเปียกชุ่มไปด้วยของเหลว โดยเฉพาะน้ำ", pos: "(Adj.)", example: "My shoes got wet in the rain." },
+            { word: "SLOW", category: "คำคุณศัพท์", descriptiveHint: "เคลื่อนที่ช้า ใช้เวลานาน", pos: "(Adj.)", example: "The turtle is a slow animal." },
+            { word: "QUIET", category: "คำคุณศัพท์", descriptiveHint: "สงบ ไม่ส่งเสียงดัง", pos: "(Adj.)", example: "Please be quiet in the library." },
+            { word: "HAPPY", category: "คำคุณศัพท์", descriptiveHint: "รู้สึกยินดีหรือพอใจ", pos: "(Adj.)", example: "She was so happy to see her friends." },
+            { word: "ROUGH", category: "คำคุณศัพท์", descriptiveHint: "มีพื้นผิวที่ไม่เรียบ ไม่ราบรื่น", pos: "(Adj.)", example: "The sea was rough due to the strong wind." },
+            { word: "CLEVER", category: "คำคุณศัพท์", descriptiveHint: "ฉลาด มีไหวพริบ", pos: "(Adj.)", example: "The student came up with a clever solution." },
+            { word: "BEAUTIFUL", category: "คำคุณศัพท์", descriptiveHint: "น่าดู น่ามอง มีความสวยงาม", pos: "(Adj.)", example: "What a beautiful sunset!" },
+            { word: "FANTASTIC", category: "คำคุณศัพท์", descriptiveHint: "ยอดเยี่ยม น่าอัศจรรย์", pos: "(Adj.)", example: "We had a fantastic time at the concert." },
+            { word: "DELICIOUS", category: "คำคุณศัพท์", descriptiveHint: "มีรสชาติที่อร่อยมาก", pos: "(Adj.)", example: "The cake was absolutely delicious." },
+            
+            // Category 11: RANDOM MIX (20 Words)
+            // (คำศัพท์เหล่านี้จะถูกรวมอยู่ใน "สุ่มรวมทุกหมวด" เท่านั้น)
+            { word: "BOOK", category: "สุ่ม 20 คำ (Random Mix)", descriptiveHint: "ชุดของกระดาษที่พิมพ์แล้ว เย็บติดกัน ใช้สำหรับอ่าน", pos: "(N.)", example: "I finished reading a good book last night." },
+            { word: "FISH", category: "สุ่ม 20 คำ (Random Mix)", descriptiveHint: "สัตว์น้ำที่มีเหงือกและครีบ", pos: "(N.)", example: "We ordered grilled fish at the restaurant." },
+            { word: "MUSIC", category: "สุ่ม 20 คำ (Random Mix)", descriptiveHint: "เสียงที่จัดเรียงอย่างมีจังหวะและท่วงทำนอง", pos: "(N.)", example: "I listen to pop music when I exercise." },
+            { word: "GLASS", category: "สุ่ม 20 คำ (Random Mix)", descriptiveHint: "วัสดุใสที่แตกง่าย มักใช้ทำหน้าต่างหรือภาชนะบรรจุเครื่องดื่ม", pos: "(N.)", example: "Be careful not to drop that glass of water." },
+            { word: "CLOUD", category: "สุ่ม 20 คำ (Random Mix)", descriptiveHint: "ก้อนไอน้ำที่ลอยอยู่ในอากาศเหนือพื้นโลก", pos: "(N.)", example: "The sky was covered with dark cloud." },
+            { word: "SHIRT", category: "สุ่ม 20 คำ (Random Mix)", descriptiveHint: "เสื้อสำหรับส่วนบนของร่างกาย มักมีคอปกและกระดุม", pos: "(N.)", example: "He wore a clean blue shirt." },
+            { word: "PENCIL", category: "สุ่ม 20 คำ (Random Mix)", descriptiveHint: "เครื่องมือสำหรับเขียนหรือวาดที่มีไส้แกรไฟต์", pos: "(N.)", example: "Do you have a spare pencil I can borrow?" },
+            { word: "CAMERA", category: "สุ่ม 20 คำ (Random Mix)", descriptiveHint: "อุปกรณ์ที่ใช้ในการถ่ายภาพหรือบันทึกวิดีโอ", pos: "(N.)", example: "She brought her new digital camera on the trip." },
+            { word: "JOURNEY", category: "สุ่ม 20 คำ (Random Mix)", descriptiveHint: "การเดินทางจากที่หนึ่งไปอีกที่หนึ่ง โดยเฉพาะการเดินทางที่ใช้เวลานาน", pos: "(N.)", example: "The train journey from London to Paris was long." },
+            { word: "FRIEND", category: "สุ่ม 20 คำ (Random Mix)", descriptiveHint: "คนที่คุณรู้จักและชอบ โดยทั่วไปไม่ได้เป็นสมาชิกในครอบครัว", pos: "(N.)", example: "My best friend and I often go to the movies." },
+            { word: "SILENCE", category: "สุ่ม 20 คำ (Random Mix)", descriptiveHint: "การไม่มีเสียงหรือความเงียบ", pos: "(N.)", example: "The deep silence of the night was calming." },
+            { word: "PROBLEM", category: "สุ่ม 20 คำ (Random Mix)", descriptiveHint: "สถานการณ์ที่ยากลำบากหรือเป็นอุปสรรคที่ต้องแก้ไข", pos: "(N.)", example: "We need to find a solution to this financial problem." },
+            { word: "FUTURE", category: "สุ่ม 20 คำ (Random Mix)", descriptiveHint: "ช่วงเวลาที่ยังมาไม่ถึง", pos: "(N.)", example: "He is saving money for his future." },
+            { word: "HISTORY", category: "สุ่ม 20 คำ (Random Mix)", descriptiveHint: "การศึกษาเหตุการณ์ที่เกิดขึ้นในอดีต", pos: "(N.)", example: "We learned about ancient Roman history today." },
+            { word: "DIAMOND", category: "สุ่ม 20 คำ (Random Mix)", descriptiveHint: "อัญมณีมีค่าที่มีความแข็งที่สุดในโลก", pos: "(N.)", example: "She wore a sparkling diamond ring." },
+            { word: "VACATION", category: "สุ่ม 20 คำ (Random Mix)", descriptiveHint: "ช่วงเวลาหยุดงานหรือโรงเรียนเพื่อพักผ่อนหรือท่องเที่ยว", pos: "(N.)", example: "We are planning a summer vacation to the tropics." },
+            { word: "CHAMPION", category: "สุ่ม 20 คำ (Random Mix)", descriptiveHint: "ผู้ชนะเลิศในการแข่งขันหรือเกม", pos: "(N.)", example: "He is the reigning boxing champion." },
+            { word: "ELECTRIC", category: "สุ่ม 20 คำ (Random Mix)", descriptiveHint: "เกี่ยวข้องกับไฟฟ้า", pos: "(Adj.)", example: "The car runs on an electric motor." },
+            { word: "BUILDING", category: "สุ่ม 20 คำ (Random Mix)", descriptiveHint: "โครงสร้างที่มีผนังและหลังคา เช่น บ้านหรือสำนักงาน", pos: "(N.)", example: "The new building in the city center is very tall." },
+            { word: "COMPUTER", category: "สุ่ม 20 คำ (Random Mix)", descriptiveHint: "เครื่องจักรที่ใช้เก็บข้อมูล ประมวลผล และดำเนินการตามโปรแกรม", pos: "(N.)", example: "I use my computer for work and for gaming." },
+        ];
+        
+        // --- HANGMAN SVG PARTS (IDs of the SVG elements to show) ---
+        const hangmanSvgParts = [
+            "head", "body", "left-arm", "right-arm", "left-leg", "right-leg", "left-eye", "right-eye"
+        ];
+        
+        const MAX_LIVES = hangmanSvgParts.length; // Total wrong guesses allowed (8)
+        
+        // --- ELEMENTS ---
+        const startScreen = document.getElementById('start-screen');
+        const gameScreen = document.getElementById('game-screen');
+        const endScreen = document.getElementById('end-screen');
+        
+        const categorySelection = document.getElementById('category-selection');
+        const categoryTitleEl = document.getElementById('category-title');
+        const livesLeftEl = document.getElementById('lives-left');
+        const scoreEl = document.getElementById('score');
+        
+        const wordDisplay = document.getElementById('word-display');
+        const keyboardEl = document.getElementById('keyboard');
+        
+        const hintMeaningDisplayEl = document.getElementById('hint-meaning-display'); 
+        const hintExampleEl = document.getElementById('hint-example');
+        const showHintBtn = document.getElementById('show-hint-btn'); 
+        const giveUpBtn = document.getElementById('give-up-btn');
+        
+        const endMessageEl = document.getElementById('end-message');
+        const endDetailsEl = document.getElementById('end-details');
+        const finalWordRevealEl = document.getElementById('final-word-reveal');
+        const finalMeaningRevealEl = document.getElementById('final-meaning-reveal');
+        const finalPronounceBtn = document.getElementById('final-pronounce-btn'); 
+        const restartBtn = document.getElementById('restart-btn');
+        const backHomeBtn = document.getElementById('back-home-btn'); 
+        
+
+        // --- GAME STATE ---
+        let lives = MAX_LIVES;
+        let currentWord = '';
+        let currentWordDetails = null;
+        let guessedLetters = new Set();
+        let currentCategory = '';
+        let totalScore = 0; // Correct words in this session
+        
+        let wordQueue = []; // คิวคำศัพท์สำหรับเซสชั่นปัจจุบัน (กันซ้ำ)
+        let currentWordIndex = 0; // ดัชนีคำศัพท์ในคิว
+        let hintUsed = false; 
+        
+        let autoAdvanceTimeout; // Global timeout variable
+
+        // --- UTILITY (Audio & Speech) ---
+        let audioContext;
+        let voices = [];
+        
+        function initAudioContext() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function setupSpeech() {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.onvoiceschanged = () => {
+                    voices = window.speechSynthesis.getVoices();
+                };
+            }
+        }
+        
+        function getVoice(lang) {
+             return voices.find(v => v.lang.startsWith('en-US') && (v.name.includes('Samantha') || v.name.includes('Google US English'))) || voices.find(v => v.lang.startsWith('en')) || null;
+        }
+
+        /**
+         * Function to speak text and return the utterance object for tracking
+         * @param {string} text 
+         * @param {string} lang 
+         * @returns {SpeechSynthesisUtterance | null}
+         */
+        function speakText(text, lang) {
+            if (!('speechSynthesis' in window)) return null;
+
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = lang;
+            utterance.rate = 0.7; 
+            utterance.volume = 1;
+
+            const targetVoice = getVoice(lang);
+            if (targetVoice) {
+                utterance.voice = targetVoice;
+            }
+
+            window.speechSynthesis.speak(utterance);
+            return utterance; // Return the object
+        }
+
+        function createTone(frequency, duration, type, volume = 0.5) {
+            initAudioContext();
+            if (!audioContext || audioContext.state === 'suspended') return;
+            
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+            oscillator.type = type; 
+
+            gainNode.gain.setValueAtTime(volume, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.00001, audioContext.currentTime + duration);
+
+            oscillator.start();
+            oscillator.stop(audioContext.currentTime + duration);
+        }
+
+        function playPing() { createTone(880, 0.15, 'sine', 0.8); }
+        function playFailTone() { createTone(150, 0.4, 'triangle', 0.7); }
+        
+        // --- Core Helpers ---
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+        
+        function drawHangman(livesLeft) {
+            hangmanSvgParts.forEach(partId => {
+                const part = document.getElementById(partId);
+                if (part) part.style.display = 'none';
+            });
+
+            const partsLost = MAX_LIVES - livesLeft;
+            for (let i = 0; i < partsLost; i++) {
+                const part = document.getElementById(hangmanSvgParts[i]);
+                if (part) part.style.display = 'block';
+            }
+        }
+
+        /* 1. การแก้ไข: ปรับปรุงฟังก์ชันการแสดงคำศัพท์โดยใช้ HTML Span สำหรับ Underline ที่แม่นยำ */
+        function updateWordDisplay(revealFullWord = false) {
+            let solved = true;
+            const normalizedWord = currentWord.toUpperCase();
+            wordDisplay.innerHTML = ''; 
+
+            for (const letter of normalizedWord) {
+                const span = document.createElement('span');
+                span.classList.add('letter-slot');
+
+                if (letter === ' ') {
+                    // Handle spaces/hyphens in words (if any)
+                    span.textContent = ' ';
+                    span.style.borderBottom = 'none'; // No underline for space
+                    span.style.minWidth = '1ch'; 
+                } else if (revealFullWord || guessedLetters.has(letter)) {
+                    // Letter is revealed
+                    span.textContent = letter;
+                    span.style.borderBottom = '5px solid transparent'; // Use transparent border for consistent slot height
+                } else {
+                    // Placeholder (Underscore slot)
+                    span.textContent = ' '; // Content is a space (invisible due to CSS color: transparent)
+                    span.classList.add('placeholder');
+                    span.style.borderBottom = '5px solid var(--color-primary)'; // The actual underline
+                    solved = false;
+                }
+                
+                wordDisplay.appendChild(span);
+            }
+            return solved;
+        }
+
+        function generateKeyboard() {
+            keyboardEl.innerHTML = '';
+            // ใช้ class 'key-btn' ตาม CSS ที่กำหนดไว้
+            for (let i = 65; i <= 90; i++) {
+                const char = String.fromCharCode(i);
+                const btn = document.createElement('button');
+                btn.textContent = char;
+                btn.className = 'key-btn';
+                btn.setAttribute('data-char', char);
+                btn.addEventListener('click', () => handleGuess(char));
+                keyboardEl.appendChild(btn);
+            }
+        }
+        
+        function updateKeyboard(char, isCorrect) {
+            const btn = keyboardEl.querySelector(`[data-char="${char}"]`);
+            if (btn) {
+                btn.disabled = true;
+                btn.classList.add(isCorrect ? 'correct' : 'wrong');
+            }
+        }
+
+        function handleGuess(char) {
+            const charUpper = char.toUpperCase();
+            if (guessedLetters.has(charUpper)) return;
+
+            guessedLetters.add(charUpper);
+            
+            if (currentWord.includes(charUpper)) {
+                updateKeyboard(charUpper, true);
+                const solved = updateWordDisplay();
+                
+                playPing();
+                
+                if (solved) {
+                    // ปิดการใช้งานปุ่มทั้งหมดทันทีเพื่อรอการเปลี่ยนหน้าจอ
+                    keyboardEl.querySelectorAll('.key-btn').forEach(btn => btn.disabled = true);
+                    showHintBtn.disabled = true;
+                    giveUpBtn.disabled = true;
+                    endGame(true); // Win
+                }
+            } else {
+                lives--;
+                updateKeyboard(charUpper, false);
+                drawHangman(lives);
+                livesLeftEl.textContent = `โอกาส: ${lives}`;
+                
+                playFailTone();
+                
+                if (lives <= 0) {
+                    // ปิดการใช้งานปุ่มทั้งหมดทันทีเพื่อรอการเปลี่ยนหน้าจอ
+                    keyboardEl.querySelectorAll('.key-btn').forEach(btn => btn.disabled = true);
+                    showHintBtn.disabled = true;
+                    giveUpBtn.disabled = true;
+                    
+                    // หน่วงเวลา 1 วินาทีเพื่อให้ผู้เล่นเห็นรูป Hangman ที่มี X-Eyes
+                    setTimeout(() => {
+                         endGame(false); // Loss
+                    }, 1000); 
+                    
+                    return; 
+                }
+            }
+        }
+        
+        // --- GAME FLOW & UI ---
+        
+        function clearAutoAdvance() {
+             if (autoAdvanceTimeout) {
+                 clearTimeout(autoAdvanceTimeout);
+                 autoAdvanceTimeout = null;
+             }
+        }
+
+        function showScreen(id) {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById(id).classList.add('active');
+            window.speechSynthesis.cancel();
+            clearAutoAdvance(); // Clear timeout whenever screen is changed
+        }
+        
+        function startAutoAdvance(isWin) {
+             const hasNext = (currentWordIndex + 1) < wordQueue.length;
+             
+             if (isWin) {
+                // For Win Condition: Auto Advance / Auto Back Home
+                const utterance = speakText(currentWordDetails.word, 'en-US');
+                
+                if (utterance) {
+                    utterance.onend = () => {
+                         if (hasNext) {
+                             // Auto advance to next word
+                             autoAdvanceTimeout = setTimeout(() => {
+                                 restartBtn.click(); 
+                             }, 3000); 
+                         } else {
+                             // Auto back to home
+                             autoAdvanceTimeout = setTimeout(() => {
+                                 backHomeBtn.click(); 
+                             }, 3000); 
+                         }
+                    };
+                } else if (hasNext) {
+                    // Fallback if speech fails
+                    autoAdvanceTimeout = setTimeout(() => {
+                       restartBtn.click(); 
+                    }, 3000); 
+                } else {
+                    // If no next word and speech failed
+                    autoAdvanceTimeout = setTimeout(() => {
+                       backHomeBtn.click(); 
+                    }, 3000); 
+                }
+             } else {
+                 // For Loss Condition: Only speak once and stop
+                 speakText(currentWordDetails.word, 'en-US');
+             }
+        }
+
+
+        function startSession(category) {
+            currentCategory = category;
+            
+            // 1. กรองคำศัพท์ตามหมวดหมู่
+            let availableWords;
+            const randomCategoryName = "สุ่มรวมทุกหมวด";
+            if (category === randomCategoryName) {
+                // กรองคำที่ไม่ได้อยู่ในหมวด 'สุ่ม 20 คำ (Random Mix)' ออก
+                availableWords = wordData.filter(d => d.category !== "สุ่ม 20 คำ (Random Mix)");
+            } else {
+                availableWords = wordData.filter(d => d.category === category || d.category === randomCategoryName);
+            }
+
+            if (availableWords.length === 0) {
+                alert("No words available for this category!");
+                showScreen('start-screen');
+                return;
+            }
+
+            wordQueue = [...availableWords];
+            shuffle(wordQueue);
+            currentWordIndex = 0;
+            totalScore = 0;
+            
+            // การเปลี่ยนหน้าจอ
+            showScreen('game-screen'); 
+
+            loadNextWord(); 
+        }
+        
+        function loadNextWord() {
+            if (currentWordIndex >= wordQueue.length) {
+                endSession(); 
+                return;
+            }
+            
+            // 1. Select the word
+            currentWordDetails = wordQueue[currentWordIndex];
+            currentWord = currentWordDetails.word.toUpperCase(); 
+
+            // 2. Reset game state for this word
+            lives = MAX_LIVES;
+            guessedLetters.clear();
+            hintUsed = false; 
+
+            // 3. Update UI
+            drawHangman(lives); 
+            updateWordDisplay();
+            generateKeyboard();
+            
+            categoryTitleEl.textContent = `หมวดหมู่: ${currentCategory}`;
+            livesLeftEl.textContent = `โอกาส: ${lives}`;
+            scoreEl.textContent = `คะแนน: ${totalScore}/${wordQueue.length}`;
+            
+            // 4. Update Hints 
+            hintMeaningDisplayEl.textContent = currentWordDetails.descriptiveHint; 
+            hintMeaningDisplayEl.style.display = 'none'; // ซ่อนข้อความ
+            showHintBtn.style.display = 'inline-block'; // แสดงปุ่ม
+            showHintBtn.disabled = false;
+            
+            // แทนที่คำศัพท์ด้วย ___ ในประโยคตัวอย่าง
+            const blankedExample = currentWordDetails.example.replace(new RegExp(currentWordDetails.word, 'gi'), '___');
+            hintExampleEl.textContent = blankedExample;
+            
+            // 5. Enable buttons (Important for when restarting from End Screen)
+            giveUpBtn.disabled = false;
+        }
+
+        function endGame(isWin) {
+            // 1. Reveal the full word (for display)
+            updateWordDisplay(true); 
+            
+            // 2. Handle score and message
+            if (isWin) {
+                totalScore++;
+                endMessageEl.textContent = "🥳 ยอดเยี่ยม! คุณชนะแล้ว!";
+                endMessageEl.style.color = 'var(--color-correct)'; 
+            } else {
+                endMessageEl.textContent = "😭 น่าเสียดาย! คุณแพ้แล้ว!";
+                endMessageEl.style.color = 'var(--color-wrong)'; 
+            }
+            endDetailsEl.textContent = `คะแนนรวมของเซสชั่น: ${totalScore}/${wordQueue.length} คำ`;
+            
+            // 3. Reveal final word details
+            finalWordRevealEl.textContent = currentWordDetails.word;
+            finalMeaningRevealEl.innerHTML = `(${currentWordDetails.pos}) ${currentWordDetails.descriptiveHint}.<br>ตัวอย่าง: ${currentWordDetails.example}`; 
+            
+            // 4. Check for next word / session end
+            const hasNext = (currentWordIndex + 1) < wordQueue.length;
+            
+            if (hasNext) {
+                restartBtn.textContent = `เล่นข้อต่อไป >> (${currentWordIndex + 1 + 1} / ${wordQueue.length})`;
+                backHomeBtn.style.display = 'block'; // Show back home button
+            } else {
+                restartBtn.textContent = "กลับหน้าหลัก"; // Change text to back home
+                backHomeBtn.style.display = 'none'; // Hide the dedicated back home button
+            }
+            
+            showScreen('end-screen');
+
+            // 5. NEW: Auto Advance Logic (Start speaking and setting up the timer)
+            startAutoAdvance(isWin);
+        }
+
+        // จัดการเมื่อเซสชั่นจบ
+        function endSession() {
+             window.speechSynthesis.cancel();
+             clearAutoAdvance(); // Clear any running auto-advance timer
+             wordQueue = []; 
+             currentWordIndex = 0;
+             showScreen('start-screen');
+        }
+        
+        function setupCategoryButtons() {
+            // กรองหมวดหมู่ทั้งหมด ยกเว้น 'สุ่ม 20 คำ (Random Mix)' 
+            const categoriesForButton = [...new Set(wordData.map(d => d.category))].filter(cat => cat !== "สุ่ม 20 คำ (Random Mix)");
+
+            categorySelection.innerHTML = '';
+            
+            categoriesForButton.forEach(category => {
+                const count = wordData.filter(d => d.category === category).length;
+                const btn = document.createElement('button');
+                btn.className = 'main-btn';
+                btn.textContent = `${category} (${count} คำ)`;
+                btn.setAttribute('data-category', category);
+                btn.addEventListener('click', () => startSession(category));
+                categorySelection.appendChild(btn);
+            });
+            
+            // Add "Random from ALL" button
+            const totalWords = wordData.length;
+            const randomCategoryName = "สุ่มรวมทุกหมวด";
+            const randomBtn = document.createElement('button');
+            randomBtn.className = 'main-btn btn-random';
+            randomBtn.textContent = `${randomCategoryName} (All Words Mix: ${totalWords} คำ)`;
+            
+            randomBtn.addEventListener('click', () => startSession(randomCategoryName)); 
+            
+            categorySelection.appendChild(randomBtn);
+        }
+
+
+        // --- EVENT LISTENERS ---
+        
+        finalPronounceBtn.addEventListener('click', () => {
+             // Clear the current timer and re-speak
+             clearAutoAdvance(); 
+             if (currentWordDetails && currentWordDetails.word) {
+                 const utterance = speakText(currentWordDetails.word, 'en-US');
+                 
+                 // If it was a win, restart the timer after re-speaking
+                 if (endMessageEl.textContent.includes('ชนะ') && utterance) {
+                     utterance.onend = () => {
+                         startAutoAdvance(true);
+                     };
+                 }
+             }
+        });
+        
+        showHintBtn.addEventListener('click', () => {
+            if (!hintUsed && currentWordDetails) {
+                hintMeaningDisplayEl.style.display = 'inline'; // แสดงข้อความคำใบ้
+                showHintBtn.style.display = 'none'; // ซ่อนปุ่ม
+                hintUsed = true;
+                playPing(); 
+            }
+        });
+
+        // Logic for Give Up Button (No confirm, full hangman, 1s delay)
+        giveUpBtn.addEventListener('click', () => {
+            // Show all parts immediately (full hangman - loss condition)
+            drawHangman(0); 
+            livesLeftEl.textContent = `โอกาส: 0`;
+            
+            // Disable buttons to prevent further interaction
+            keyboardEl.querySelectorAll('.key-btn').forEach(btn => btn.disabled = true);
+            showHintBtn.disabled = true;
+            giveUpBtn.disabled = true;
+
+            // Wait 1 second before going to the end screen/session end
+            setTimeout(() => {
+                // Technically it's a loss, but we skip the end screen and go to start.
+                endSession(); 
+            }, 1000); 
+        });
+        
+        // Back Home Button Listener
+        backHomeBtn.addEventListener('click', () => {
+            endSession();
+        });
+
+
+        restartBtn.addEventListener('click', () => {
+             window.speechSynthesis.cancel();
+             clearAutoAdvance(); // MUST clear the timeout
+             
+             currentWordIndex++; 
+
+             if (currentWordIndex < wordQueue.length) {
+                 showScreen('game-screen'); // ต้องเรียกเพื่อกลับจาก end-screen
+                 loadNextWord();
+             } else {
+                 // End of session, redirect to home
+                 endSession();
+             }
+        });
+
+        // --- INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            setupSpeech();
+            setupCategoryButtons();
+            drawHangman(MAX_LIVES); 
+            
+            // Resume audio context on first user interaction (สำคัญสำหรับ Safari/Chrome)
+            document.addEventListener('click', () => {
+                initAudioContext();
+                if (audioContext && audioContext.state === 'suspended') {
+                    audioContext.resume();
+                }
+            }, { once: true });
+        });
+    </script>
+</body>
+</html><!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WordWise Hangman - เกมฝึกศัพท์</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* --- THEME & GLOBAL STYLES (Dark/Green Theme) --- */
+        :root {
+            --color-primary: #38C172; /* Bright Green - For emphasis, score, correct */
+            --color-secondary: #42A5F5; /* Blue - For keyboard keys */
+            --color-correct: #38C172; 
+            --color-wrong: #EF5350; /* Red */
+            --color-bg: #2C3E50; /* Dark Blue Gray */
+            --color-card: #34495E; /* Slightly Lighter Dark Gray */
+            --color-text-dark: #ECF0F1; /* Light Text */
+            --color-text-light: #FFFFFF;
+            --color-hint-bg: #223040; /* Very Dark Blue for Hint Box */
+            --color-hint-border: #F1C40F; /* Gold accent for hint border */
+            --color-hangman-wood: #7F8C8D; /* Light Gray/Silver for gallows */
+            --color-hangman-rope: #BDC3C7; /* Lighter Gray */
+            --color-hangman-body: #F1C40F; /* Gold/Yellow body (similar to image) */
+        }
+
+        /* Responsive Container */
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: var(--color-bg);
+            color: var(--color-text-dark);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            text-align: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            box-sizing: border-box;
+            background-color: var(--color-card);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            padding: 0;
+        }
+
+        /* Header (ปรับลด Padding) */
+        header {
+            background-color: var(--color-hint-bg); 
+            color: var(--color-primary);
+            padding: 1rem 1rem; 
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+            margin-bottom: 0.5rem; 
+        }
+        header h1 {
+            font-size: 1.8rem;
+            margin: 0;
+        }
+
+        /* Screen Management (ปรับลด Padding) */
+        .screen {
+            padding: 0.5rem 1rem; 
+            display: none; 
+            flex-grow: 1;
+            flex-direction: column;
+        }
+        .screen.active {
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        /* --- Start/End Screen --- */
+        .start-screen h2 {
+            font-size: 2rem;
+            color: var(--color-primary);
+            margin-bottom: 0.5rem; 
+        }
+        .start-screen p {
+            font-size: 1.1rem;
+            margin-bottom: 1rem; 
+            color: var(--color-text-dark);
+        }
+        .start-screen .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 90%;
+            max-width: 400px;
+            margin: 0 auto 0.5rem; 
+            overflow-y: auto; 
+            max-height: 60vh;
+            padding: 0 5px;
+        }
+        .main-btn {
+            background-color: var(--color-secondary);
+            color: var(--color-text-light);
+            border: none;
+            padding: 1rem;
+            border-radius: 12px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #3188d6;
+            transition: transform 0.1s, box-shadow 0.1s;
+        }
+        .main-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #3188d6;
+        }
+        .main-btn.btn-random {
+            background-color: var(--color-primary);
+            box-shadow: 0 4px 0 #32A860;
+        }
+        .main-btn.btn-random:active {
+            box-shadow: 0 2px 0 #32A860;
+        }
+
+
+        /* --- Game Screen Components --- */
+        #status-bar {
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+            margin-bottom: 1rem; 
+            padding: 0 0.5rem;
+            color: var(--color-text-dark);
+        }
+
+        /* Hangman and Word Area */
+        #hangman-word-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 0.5rem; 
+            padding: 0.5rem; 
+        }
+        
+        #hangman-svg {
+            width: 180px; 
+            height: 180px; 
+            margin-bottom: 0.5rem; 
+            overflow: visible; 
+            background-color: #223040; 
+            border-radius: 10px;
+            padding: 10px;
+        }
+        #hangman-svg line, #hangman-svg circle, #hangman-svg path {
+            stroke: var(--color-hangman-wood);
+            stroke-width: 4;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            transition: stroke-dashoffset 0.5s ease-out; 
+        }
+        .hangman-part {
+            stroke: var(--color-hangman-body);
+            stroke-width: 3;
+            fill: none;
+        }
+        .hangman-part.head {
+            fill: var(--color-hangman-body);
+            stroke: none;
+        }
+
+
         /* 1. การแก้ไข: ปรับขนาดเส้นขีดล่างให้เท่าความกว้างตัวอักษรพอดี (ใช้ Flexbox & Span) */
         #word-display {
             display: flex; /* ใช้ Flexbox เพื่อจัดเรียงตัวอักษรแนวนอน */
@@ -1141,3 +2287,4 @@
     </script>
 </body>
 </html>
+
