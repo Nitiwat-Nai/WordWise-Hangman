@@ -169,16 +169,37 @@
         }
 
 
-        /* คำขอ: ปรับขนาดเส้นขีดล่างให้เท่าความกว้างตัวอักษรพอดี */
+        /* 1. การแก้ไข: ปรับขนาดเส้นขีดล่างให้เท่าความกว้างตัวอักษรพอดี (ใช้ Flexbox & Span) */
         #word-display {
+            display: flex; /* ใช้ Flexbox เพื่อจัดเรียงตัวอักษรแนวนอน */
+            justify-content: center;
+            gap: 10px; /* ระยะห่างระหว่างตัวอักษร/ช่อง */
             font-size: 2.8rem; 
             font-weight: 900;
-            /* ลบ letter-spacing ออกเพื่อให้ช่องว่างมาจากตัวอักษรและช่องว่างใน JS เท่านั้น */
-            /* letter-spacing: 8px; */ 
             margin-bottom: 0.5rem; 
             color: var(--color-primary); 
-            word-break: break-all;
+            line-height: 1.2; /* กำหนดความสูงบรรทัดให้มีที่ว่างสำหรับเส้นขีดล่าง */
         }
+        .letter-slot {
+            display: flex; /* ใช้ Flexbox ใน span เพื่อจัดตำแหน่งตัวอักษร */
+            justify-content: center;
+            align-items: flex-end; /* จัดตัวอักษรให้อยู่ตำแหน่งล่างสุดของช่อง */
+            width: 1.2ch; /* ***คีย์สำคัญ: กำหนดความกว้างของช่องให้เท่ากับ 1.2 เท่าของความกว้างตัวอักษร */
+            text-align: center;
+            box-sizing: border-box;
+            padding-bottom: 5px; /* ระยะห่างระหว่างตัวอักษรกับเส้นขีดล่าง */
+        }
+        .letter-slot.placeholder {
+            /* สำหรับช่องที่ยังไม่ได้ตอบ (แสดงขีดล่าง) */
+            border-bottom: 5px solid var(--color-primary); 
+            color: transparent; /* ซ่อนเนื้อหา (ที่เป็นช่องว่าง) แต่แสดงเส้นขีดล่าง */
+            font-weight: 900;
+        }
+        .letter-slot:not(.placeholder) {
+             /* สำหรับช่องที่ตอบแล้ว (แสดงตัวอักษร) */
+             border-bottom: 5px solid transparent; /* เส้นขีดล่างใส เพื่อให้ความสูงของช่องเท่ากัน */
+        }
+        
 
         /* Hint Box */
         #hint-box {
@@ -330,18 +351,29 @@
             font-size: 1.8rem;
             margin-left: 10px;
         }
+        
+        /* 2. การแก้ไข: จัดปุ่มใน End Screen ให้อยู่ในแนวนอน */
+        .end-button-group {
+            display: flex;
+            justify-content: space-between; /* ใช้ space-between เพื่อแยกปุ่มออกจากกัน */
+            gap: 10px;
+            width: 100%; /* ใช้ความกว้างเต็มของคอนเทนเนอร์ End Screen */
+            max-width: 450px; 
+            margin: 2rem auto 0;
+            padding: 0 1rem;
+            box-sizing: border-box;
+        }
         .btn-restart {
             background-color: var(--color-primary);
             box-shadow: 0 5px 0 #32A860;
-            width: 80%;
-            margin-top: 2rem;
+            width: 50%; /* ให้มีขนาดเท่ากัน */
+            margin-top: 0 !important; /* ยกเลิก margin-top เก่า */
         }
-        /* New Back Home Button Style */
         .btn-back-home {
             background-color: #6A7A7B; 
             box-shadow: 0 5px 0 #576364; 
-            width: 80%;
-            margin-top: 12px;
+            width: 50%; /* ให้มีขนาดเท่ากัน */
+            margin-top: 0 !important; /* ยกเลิก margin-top เก่า */
         }
 
     </style>
@@ -395,7 +427,7 @@
 
                     </g>
                 </svg>
-                <div id="word-display">_ _ _ _ _</div>
+                <div id="word-display"></div>
             </div>
 
             <div id="hint-box">
@@ -436,10 +468,12 @@
                     </div>
                 </div>
                 
-                <button id="restart-btn" class="main-btn btn-restart">โหลด...</button> 
-                <button id="back-home-btn" class="main-btn btn-back-home" style="margin-top: 12px;">
-                    กลับหน้าหลัก
-                </button>
+                <div class="end-button-group">
+                    <button id="restart-btn" class="main-btn btn-restart">โหลด...</button> 
+                    <button id="back-home-btn" class="main-btn btn-back-home">
+                        กลับหน้าหลัก
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -622,7 +656,7 @@
         const finalMeaningRevealEl = document.getElementById('final-meaning-reveal');
         const finalPronounceBtn = document.getElementById('final-pronounce-btn'); 
         const restartBtn = document.getElementById('restart-btn');
-        const backHomeBtn = document.getElementById('back-home-btn'); // NEW ELEMENT
+        const backHomeBtn = document.getElementById('back-home-btn'); 
         
 
         // --- GAME STATE ---
@@ -637,7 +671,7 @@
         let currentWordIndex = 0; // ดัชนีคำศัพท์ในคิว
         let hintUsed = false; 
         
-        let autoAdvanceTimeout; // NEW: Global timeout variable
+        let autoAdvanceTimeout; // Global timeout variable
 
         // --- UTILITY (Audio & Speech) ---
         let audioContext;
@@ -729,22 +763,35 @@
             }
         }
 
+        /* 1. การแก้ไข: ปรับปรุงฟังก์ชันการแสดงคำศัพท์โดยใช้ HTML Span สำหรับ Underline ที่แม่นยำ */
         function updateWordDisplay(revealFullWord = false) {
-            let display = '';
             let solved = true;
             const normalizedWord = currentWord.toUpperCase();
+            wordDisplay.innerHTML = ''; 
+
             for (const letter of normalizedWord) {
-                if (revealFullWord || guessedLetters.has(letter)) {
-                    // ใช้ตัวอักษรตามด้วยช่องว่าง
-                    display += letter + ' '; 
+                const span = document.createElement('span');
+                span.classList.add('letter-slot');
+
+                if (letter === ' ') {
+                    // Handle spaces/hyphens in words (if any)
+                    span.textContent = ' ';
+                    span.style.borderBottom = 'none'; // No underline for space
+                    span.style.minWidth = '1ch'; 
+                } else if (revealFullWord || guessedLetters.has(letter)) {
+                    // Letter is revealed
+                    span.textContent = letter;
+                    span.style.borderBottom = '5px solid transparent'; // Use transparent border for consistent slot height
                 } else {
-                    // ใช้ _ ตามด้วยช่องว่าง 
-                    display += '_ '; 
+                    // Placeholder (Underscore slot)
+                    span.textContent = ' '; // Content is a space (invisible due to CSS color: transparent)
+                    span.classList.add('placeholder');
+                    span.style.borderBottom = '5px solid var(--color-primary)'; // The actual underline
                     solved = false;
                 }
+                
+                wordDisplay.appendChild(span);
             }
-            // trim() เพื่อลบช่องว่างสุดท้าย
-            wordDisplay.textContent = display.trim();
             return solved;
         }
 
@@ -1038,7 +1085,7 @@
             }
         });
 
-        // NEW LOGIC for Give Up Button (No confirm, full hangman, 1s delay)
+        // Logic for Give Up Button (No confirm, full hangman, 1s delay)
         giveUpBtn.addEventListener('click', () => {
             // Show all parts immediately (full hangman - loss condition)
             drawHangman(0); 
@@ -1056,7 +1103,7 @@
             }, 1000); 
         });
         
-        // NEW: Back Home Button Listener
+        // Back Home Button Listener
         backHomeBtn.addEventListener('click', () => {
             endSession();
         });
