@@ -50,22 +50,24 @@
             padding: 0;
         }
 
-        /* Header (ปรับลด Padding) */
+        /* Header (แก้ไข: ลด Padding และ Margin) */
         header {
             background-color: var(--color-hint-bg); 
             color: var(--color-primary);
-            padding: 1rem 1rem; 
+            /* --- แก้ไขส่วนสีแดง (ย่อ) --- */
+            padding: 0.75rem 1rem; 
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
-            margin-bottom: 0.5rem; 
+            margin-bottom: 0.3rem; 
         }
         header h1 {
             font-size: 1.8rem;
             margin: 0;
         }
 
-        /* Screen Management (ปรับลด Padding) */
+        /* Screen Management (แก้ไข: ลด Padding) */
         .screen {
-            padding: 0.5rem 1rem; 
+            /* --- แก้ไขส่วนสีแดง (ย่อ) --- */
+            padding: 0.2rem 1rem; 
             display: none; 
             flex-grow: 1;
             flex-direction: column;
@@ -127,7 +129,8 @@
             display: flex;
             justify-content: space-between;
             font-weight: bold;
-            margin-bottom: 1rem; 
+            /* --- แก้ไขส่วนสีแดง (ย่อ) --- */
+            margin-bottom: 0.5rem; 
             padding: 0 0.5rem;
             color: var(--color-text-dark);
         }
@@ -137,13 +140,15 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin-bottom: 0.5rem; 
+            /* --- แก้ไขส่วนสีแดง (ย่อ) --- */
+            margin-bottom: 0.3rem; 
             padding: 0.5rem; 
         }
         
         #hangman-svg {
-            width: 180px; 
-            height: 180px; 
+            /* --- แก้ไขส่วนสีน้ำเงิน (ขยาย) --- */
+            width: 220px; 
+            height: 220px; 
             margin-bottom: 0.5rem; 
             overflow: visible; 
             background-color: #223040; 
@@ -169,45 +174,44 @@
         }
 
 
-        /* 1. การแก้ไข: ปรับขนาดเส้นขีดล่างให้เท่าความกว้างตัวอักษรพอดี (ใช้ Flexbox & Span) */
+        /* 1. การแก้ไข: ปรับปรุงฟอนต์ขนาดใหญ่ */
         #word-display {
-            display: flex; /* ใช้ Flexbox เพื่อจัดเรียงตัวอักษรแนวนอน */
+            display: flex; 
             justify-content: center;
-            gap: 10px; /* ระยะห่างระหว่างตัวอักษร/ช่อง */
+            gap: 10px; 
             font-size: 2.8rem; 
             font-weight: 900;
             margin-bottom: 0.5rem; 
             color: var(--color-primary); 
-            line-height: 1.2; /* กำหนดความสูงบรรทัดให้มีที่ว่างสำหรับเส้นขีดล่าง */
+            line-height: 1.2; 
         }
         .letter-slot {
-            display: flex; /* ใช้ Flexbox ใน span เพื่อจัดตำแหน่งตัวอักษร */
+            display: flex; 
             justify-content: center;
-            align-items: flex-end; /* จัดตัวอักษรให้อยู่ตำแหน่งล่างสุดของช่อง */
-            width: 1.2ch; /* ***คีย์สำคัญ: กำหนดความกว้างของช่องให้เท่ากับ 1.2 เท่าของความกว้างตัวอักษร */
+            align-items: flex-end; 
+            width: 1.2ch; 
             text-align: center;
             box-sizing: border-box;
-            padding-bottom: 5px; /* ระยะห่างระหว่างตัวอักษรกับเส้นขีดล่าง */
+            padding-bottom: 5px; 
         }
         .letter-slot.placeholder {
-            /* สำหรับช่องที่ยังไม่ได้ตอบ (แสดงขีดล่าง) */
             border-bottom: 5px solid var(--color-primary); 
-            color: transparent; /* ซ่อนเนื้อหา (ที่เป็นช่องว่าง) แต่แสดงเส้นขีดล่าง */
+            color: transparent; 
             font-weight: 900;
         }
         .letter-slot:not(.placeholder) {
-             /* สำหรับช่องที่ตอบแล้ว (แสดงตัวอักษร) */
-             border-bottom: 5px solid transparent; /* เส้นขีดล่างใส เพื่อให้ความสูงของช่องเท่ากัน */
+             border-bottom: 5px solid transparent; 
         }
         
 
-        /* Hint Box */
+        /* Hint Box (แก้ไข: ลด Margin-bottom) */
         #hint-box {
             background-color: var(--color-hint-bg);
             border: 2px solid var(--color-hint-border);
             border-radius: 10px;
             padding: 0.8rem 1rem;
-            margin-bottom: 1rem; 
+            /* --- แก้ไขส่วนสีแดง (ย่อ) --- */
+            margin-bottom: 0.5rem; 
             text-align: left;
             font-size: 0.95rem;
             color: var(--color-text-dark);
@@ -259,12 +263,13 @@
              display: block;
         }
         
-        /* Keyboard (ลด Padding ด้านล่าง) */
+        /* Keyboard (แก้ไข: ลด Padding ด้านล่าง) */
         #keyboard {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
             gap: 8px;
-            padding: 0 0.5rem 0.5rem; 
+            /* --- แก้ไขส่วนสีแดง (ย่อ) --- */
+            padding: 0 0.5rem 0.25rem; 
         }
 
         .key-btn {
@@ -302,9 +307,10 @@
             transform: none;
         }
         
-        /* ปุ่มยอมแพ้ (ปรับลด Margin-top) */
+        /* ปุ่มยอมแพ้ (แก้ไข: ลด Margin-top) */
         #give-up-btn {
-            margin-top: 0.5rem !important; 
+            /* --- แก้ไขส่วนสีแดง (ย่อ) --- */
+            margin-top: 0.25rem !important; 
         }
 
         /* --- End Game Screen --- */
@@ -447,7 +453,7 @@
             <div id="keyboard">
                 </div>
             
-            <button id="give-up-btn" class="main-btn" style="background-color: #7F8C8D; box-shadow: 0 5px 0 #6A7A7B; width: 100%; margin-top: 0.5rem;">
+            <button id="give-up-btn" class="main-btn" style="background-color: #7F8C8D; box-shadow: 0 5px 0 #6A7A7B; width: 100%; margin-top: 0.25rem;">
                 ยอมแพ้ / กลับหน้าหลัก
             </button>
         </div>
