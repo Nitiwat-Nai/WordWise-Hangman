@@ -21,6 +21,7 @@
             --color-hangman-wood: #7F8C8D; /* Light Gray/Silver for gallows */
             --color-hangman-rope: #BDC3C7; /* Lighter Gray */
             --color-hangman-body: #F1C40F; /* Gold/Yellow body (similar to image) */
+            --color-auto-active: #E74C3C; /* Red for active secret mode */
         }
 
         /* Responsive Container */
@@ -50,24 +51,35 @@
             padding: 0;
         }
 
-        /* Header (แก้ไข: ลด Padding และ Margin) */
+        /* Header */
         header {
             background-color: var(--color-hint-bg); 
             color: var(--color-primary);
-            /* --- แก้ไขส่วนสีแดง (ย่อ) --- */
-            padding: 0.75rem 1rem; 
+            padding: 1rem 1rem; 
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
-            margin-bottom: 0.3rem; 
+            margin-bottom: 0.5rem; 
         }
         header h1 {
             font-size: 1.8rem;
             margin: 0;
+            /* เพิ่ม cursor: pointer เพื่อบอกเป็นนัยว่าคลิกได้ */
+            cursor: pointer; 
+            transition: color 0.2s;
+        }
+        /* Style when secret mode is active */
+        header h1.robot-active {
+            color: var(--color-auto-active);
+            animation: pulse 1s infinite alternate;
+        }
+        
+        @keyframes pulse {
+            from { transform: scale(1); opacity: 1; }
+            to { transform: scale(1.03); opacity: 0.8; }
         }
 
-        /* Screen Management (แก้ไข: ลด Padding) */
+        /* Screen Management */
         .screen {
-            /* --- แก้ไขส่วนสีแดง (ย่อ) --- */
-            padding: 0.2rem 1rem; 
+            padding: 0.5rem 1rem; 
             display: none; 
             flex-grow: 1;
             flex-direction: column;
@@ -122,15 +134,20 @@
         .main-btn.btn-random:active {
             box-shadow: 0 2px 0 #32A860;
         }
-
+        /* Disable styling when Auto Advance is waiting */
+        .main-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
 
         /* --- Game Screen Components --- */
         #status-bar {
             display: flex;
             justify-content: space-between;
             font-weight: bold;
-            /* --- แก้ไขส่วนสีแดง (ย่อ) --- */
-            margin-bottom: 0.5rem; 
+            margin-bottom: 1rem; 
             padding: 0 0.5rem;
             color: var(--color-text-dark);
         }
@@ -140,15 +157,13 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            /* --- แก้ไขส่วนสีแดง (ย่อ) --- */
-            margin-bottom: 0.3rem; 
+            margin-bottom: 0.5rem; 
             padding: 0.5rem; 
         }
         
         #hangman-svg {
-            /* --- แก้ไขส่วนสีน้ำเงิน (ขยาย) --- */
-            width: 220px; 
-            height: 220px; 
+            width: 180px; 
+            height: 180px; 
             margin-bottom: 0.5rem; 
             overflow: visible; 
             background-color: #223040; 
@@ -174,7 +189,7 @@
         }
 
 
-        /* 1. การแก้ไข: ปรับปรุงฟอนต์ขนาดใหญ่ */
+        /* Word Display */
         #word-display {
             display: flex; 
             justify-content: center;
@@ -204,14 +219,13 @@
         }
         
 
-        /* Hint Box (แก้ไข: ลด Margin-bottom) */
+        /* Hint Box */
         #hint-box {
             background-color: var(--color-hint-bg);
             border: 2px solid var(--color-hint-border);
             border-radius: 10px;
             padding: 0.8rem 1rem;
-            /* --- แก้ไขส่วนสีแดง (ย่อ) --- */
-            margin-bottom: 0.5rem; 
+            margin-bottom: 1rem; 
             text-align: left;
             font-size: 0.95rem;
             color: var(--color-text-dark);
@@ -229,7 +243,7 @@
             margin-right: 5px;
         }
 
-        /* ปุ่มคำใบ้ที่ถูกย้ายเข้ามาในกล่องคำใบ้และถูกปรับให้เป็น Inline */
+        /* Hint Button */
         #show-hint-btn {
             background-color: #FFB74D; 
             color: var(--color-text-dark);
@@ -263,13 +277,12 @@
              display: block;
         }
         
-        /* Keyboard (แก้ไข: ลด Padding ด้านล่าง) */
+        /* Keyboard (ลด Padding ด้านล่าง) */
         #keyboard {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
             gap: 8px;
-            /* --- แก้ไขส่วนสีแดง (ย่อ) --- */
-            padding: 0 0.5rem 0.25rem; 
+            padding: 0 0.5rem 0.5rem; 
         }
 
         .key-btn {
@@ -307,10 +320,9 @@
             transform: none;
         }
         
-        /* ปุ่มยอมแพ้ (แก้ไข: ลด Margin-top) */
+        /* ปุ่มยอมแพ้ (ปรับลด Margin-top) */
         #give-up-btn {
-            /* --- แก้ไขส่วนสีแดง (ย่อ) --- */
-            margin-top: 0.25rem !important; 
+            margin-top: 0.5rem !important; 
         }
 
         /* --- End Game Screen --- */
@@ -358,12 +370,12 @@
             margin-left: 10px;
         }
         
-        /* 2. การแก้ไข: จัดปุ่มใน End Screen ให้อยู่ในแนวนอน */
+        /* จัดปุ่มใน End Screen ให้อยู่ในแนวนอน */
         .end-button-group {
             display: flex;
-            justify-content: space-between; /* ใช้ space-between เพื่อแยกปุ่มออกจากกัน */
+            justify-content: space-between; 
             gap: 10px;
-            width: 100%; /* ใช้ความกว้างเต็มของคอนเทนเนอร์ End Screen */
+            width: 100%; 
             max-width: 450px; 
             margin: 2rem auto 0;
             padding: 0 1rem;
@@ -372,23 +384,23 @@
         .btn-restart {
             background-color: var(--color-primary);
             box-shadow: 0 5px 0 #32A860;
-            width: 50%; /* ให้มีขนาดเท่ากัน */
-            margin-top: 0 !important; /* ยกเลิก margin-top เก่า */
+            width: 50%; 
+            margin-top: 0 !important; 
         }
         .btn-back-home {
             background-color: #6A7A7B; 
             box-shadow: 0 5px 0 #576364; 
-            width: 50%; /* ให้มีขนาดเท่ากัน */
-            margin-top: 0 !important; /* ยกเลิก margin-top เก่า */
+            width: 50%; 
+            margin-top: 0 !important; 
         }
-
+        
     </style>
 </head>
 <body>
 
     <div class="container" id="main-container">
         <header>
-            <h1>WordWise Hangman</h1>
+            <h1 id="game-title">WordWise Hangman</h1>
         </header>
 
         <div id="start-screen" class="screen active start-screen">
@@ -428,7 +440,7 @@
                         </g>
                         <g id="right-eye" class="hangman-part" style="display:none;">
                             <line x1="144" y1="52" x2="152" y2="58" stroke="var(--color-wrong)" stroke-width="2"/>
-                            <line x1="144" y1="58" x2="152" y2="52" stroke="var(--color-wrong)" stroke-width="2"/>
+                            <line x1="144" y1="58" y2="152" x2="52" stroke="var(--color-wrong)" stroke-width="2"/>
                         </g>
 
                     </g>
@@ -453,7 +465,7 @@
             <div id="keyboard">
                 </div>
             
-            <button id="give-up-btn" class="main-btn" style="background-color: #7F8C8D; box-shadow: 0 5px 0 #6A7A7B; width: 100%; margin-top: 0.25rem;">
+            <button id="give-up-btn" class="main-btn" style="background-color: #7F8C8D; box-shadow: 0 5px 0 #6A7A7B; width: 100%; margin-top: 0.5rem;">
                 ยอมแพ้ / กลับหน้าหลัก
             </button>
         </div>
@@ -607,8 +619,7 @@
             { word: "FANTASTIC", category: "คำคุณศัพท์", descriptiveHint: "ยอดเยี่ยม น่าอัศจรรย์", pos: "(Adj.)", example: "We had a fantastic time at the concert." },
             { word: "DELICIOUS", category: "คำคุณศัพท์", descriptiveHint: "มีรสชาติที่อร่อยมาก", pos: "(Adj.)", example: "The cake was absolutely delicious." },
             
-            // Category 11: RANDOM MIX (20 Words)
-            // (คำศัพท์เหล่านี้จะถูกรวมอยู่ใน "สุ่มรวมทุกหมวด" เท่านั้น)
+            // Category 11: RANDOM MIX (20 Words) - These are ONLY for the "สุ่มรวมทุกหมวด" button
             { word: "BOOK", category: "สุ่ม 20 คำ (Random Mix)", descriptiveHint: "ชุดของกระดาษที่พิมพ์แล้ว เย็บติดกัน ใช้สำหรับอ่าน", pos: "(N.)", example: "I finished reading a good book last night." },
             { word: "FISH", category: "สุ่ม 20 คำ (Random Mix)", descriptiveHint: "สัตว์น้ำที่มีเหงือกและครีบ", pos: "(N.)", example: "We ordered grilled fish at the restaurant." },
             { word: "MUSIC", category: "สุ่ม 20 คำ (Random Mix)", descriptiveHint: "เสียงที่จัดเรียงอย่างมีจังหวะและท่วงทำนอง", pos: "(N.)", example: "I listen to pop music when I exercise." },
@@ -643,6 +654,7 @@
         const gameScreen = document.getElementById('game-screen');
         const endScreen = document.getElementById('end-screen');
         
+        const gameTitleEl = document.getElementById('game-title'); // NEW
         const categorySelection = document.getElementById('category-selection');
         const categoryTitleEl = document.getElementById('category-title');
         const livesLeftEl = document.getElementById('lives-left');
@@ -677,7 +689,13 @@
         let currentWordIndex = 0; // ดัชนีคำศัพท์ในคิว
         let hintUsed = false; 
         
-        let autoAdvanceTimeout; // Global timeout variable
+        let autoAdvanceTimeout; // Global timeout variable for end screen speech/delay
+        
+        // --- AUTO-SOLVE STATE (NEW) ---
+        let isAutoModeActive = false; // Secret mode toggle
+        let isAutoSolving = false; // Flag to indicate auto-solve is currently running
+        let autoSolveTimeoutId = null; // Timer ID for the auto-solve delay
+        let lettersToRevealQueue = []; // Queue of letters for the auto-solve
 
         // --- UTILITY (Audio & Speech) ---
         let audioContext;
@@ -703,9 +721,6 @@
 
         /**
          * Function to speak text and return the utterance object for tracking
-         * @param {string} text 
-         * @param {string} lang 
-         * @returns {SpeechSynthesisUtterance | null}
          */
         function speakText(text, lang) {
             if (!('speechSynthesis' in window)) return null;
@@ -733,7 +748,7 @@
             const gainNode = audioContext.createGain();
 
             oscillator.connect(gainNode);
-            gainNode.connect(audioContext.destination);
+            gainNode.connect(audioContext.destination); // Fixed destination access
 
             oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
             oscillator.type = type; 
@@ -769,7 +784,6 @@
             }
         }
 
-        /* 1. การแก้ไข: ปรับปรุงฟังก์ชันการแสดงคำศัพท์โดยใช้ HTML Span สำหรับ Underline ที่แม่นยำ */
         function updateWordDisplay(revealFullWord = false) {
             let solved = true;
             const normalizedWord = currentWord.toUpperCase();
@@ -780,19 +794,16 @@
                 span.classList.add('letter-slot');
 
                 if (letter === ' ') {
-                    // Handle spaces/hyphens in words (if any)
                     span.textContent = ' ';
-                    span.style.borderBottom = 'none'; // No underline for space
+                    span.style.borderBottom = 'none'; 
                     span.style.minWidth = '1ch'; 
                 } else if (revealFullWord || guessedLetters.has(letter)) {
-                    // Letter is revealed
                     span.textContent = letter;
-                    span.style.borderBottom = '5px solid transparent'; // Use transparent border for consistent slot height
+                    span.style.borderBottom = '5px solid transparent'; 
                 } else {
-                    // Placeholder (Underscore slot)
-                    span.textContent = ' '; // Content is a space (invisible due to CSS color: transparent)
+                    span.textContent = ' '; 
                     span.classList.add('placeholder');
-                    span.style.borderBottom = '5px solid var(--color-primary)'; // The actual underline
+                    span.style.borderBottom = '5px solid var(--color-primary)'; 
                     solved = false;
                 }
                 
@@ -803,7 +814,6 @@
 
         function generateKeyboard() {
             keyboardEl.innerHTML = '';
-            // ใช้ class 'key-btn' ตาม CSS ที่กำหนดไว้
             for (let i = 65; i <= 90; i++) {
                 const char = String.fromCharCode(i);
                 const btn = document.createElement('button');
@@ -811,20 +821,47 @@
                 btn.className = 'key-btn';
                 btn.setAttribute('data-char', char);
                 btn.addEventListener('click', () => handleGuess(char));
+                
+                // Re-apply styles if already guessed 
+                if (guessedLetters.has(char)) {
+                    btn.disabled = true;
+                    // Check against the current word
+                    if (currentWord.includes(char)) {
+                        btn.classList.add('correct');
+                    } else {
+                        btn.classList.add('wrong');
+                    }
+                }
+                
                 keyboardEl.appendChild(btn);
             }
+            // Keyboard is NOT hidden in auto-solve mode now
         }
         
         function updateKeyboard(char, isCorrect) {
+            // Update key appearance regardless of mode
             const btn = keyboardEl.querySelector(`[data-char="${char}"]`);
             if (btn) {
                 btn.disabled = true;
-                btn.classList.add(isCorrect ? 'correct' : 'wrong');
+                
+                // In Auto-Solve, the system only guesses CORRECT letters from the queue
+                // So we force 'correct' in auto mode, and use the guess result in manual mode
+                if (isAutoModeActive) {
+                    btn.classList.add('correct');
+                    btn.classList.remove('wrong'); 
+                } else {
+                    btn.classList.add(isCorrect ? 'correct' : 'wrong');
+                }
             }
         }
 
         function handleGuess(char) {
+            // Prevent manual interaction if auto-solve is running (prevents race condition)
+            if (isAutoSolving) return; 
+            
             const charUpper = char.toUpperCase();
+            
+            // Check if already guessed
             if (guessedLetters.has(charUpper)) return;
 
             guessedLetters.add(charUpper);
@@ -836,13 +873,16 @@
                 playPing();
                 
                 if (solved) {
-                    // ปิดการใช้งานปุ่มทั้งหมดทันทีเพื่อรอการเปลี่ยนหน้าจอ
+                    totalScore++; // Manual score update
+                    scoreEl.textContent = `คะแนน: ${totalScore}/${wordQueue.length}`;
+                    // Manual win flow: Disable buttons and go to end screen
                     keyboardEl.querySelectorAll('.key-btn').forEach(btn => btn.disabled = true);
                     showHintBtn.disabled = true;
                     giveUpBtn.disabled = true;
-                    endGame(true); // Win
+                    endGame(true); 
                 }
             } else {
+                // Manual loss flow
                 lives--;
                 updateKeyboard(charUpper, false);
                 drawHangman(lives);
@@ -851,24 +891,117 @@
                 playFailTone();
                 
                 if (lives <= 0) {
-                    // ปิดการใช้งานปุ่มทั้งหมดทันทีเพื่อรอการเปลี่ยนหน้าจอ
+                    // Loss flow: Disable buttons and go to end screen
                     keyboardEl.querySelectorAll('.key-btn').forEach(btn => btn.disabled = true);
                     showHintBtn.disabled = true;
                     giveUpBtn.disabled = true;
-                    
-                    // หน่วงเวลา 1 วินาทีเพื่อให้ผู้เล่นเห็นรูป Hangman ที่มี X-Eyes
                     setTimeout(() => {
                          endGame(false); // Loss
-                    }, 1000); 
+                    }, 500); 
                     
                     return; 
                 }
             }
+            scoreEl.textContent = `คะแนน: ${totalScore}/${wordQueue.length}`;
         }
         
+        // --- AUTO-SOLVE LOGIC (REVISED) ---
+        
+        function stopAutoSolve() {
+            if (autoSolveTimeoutId) {
+                clearTimeout(autoSolveTimeoutId);
+                autoSolveTimeoutId = null;
+            }
+            isAutoSolving = false;
+        }
+
+        /**
+         * Function that performs the single letter revelation step
+         */
+        function autoSolveLetter(char) {
+            const charUpper = char.toUpperCase();
+            
+            // 1. Add and process the letter
+            if (!guessedLetters.has(charUpper)) {
+                guessedLetters.add(charUpper);
+                updateKeyboard(charUpper, true); // <--- Key turns GREEN (Req #2)
+            }
+            
+            // 2. Update display
+            const solved = updateWordDisplay(); 
+            playPing(); 
+            
+            if (solved) {
+                // Word solved. Stop the loop, add score, and go to End Screen (Req #3)
+                stopAutoSolve(); 
+                totalScore++; // Update score
+                scoreEl.textContent = `คะแนน: ${totalScore}/${wordQueue.length}`; 
+                
+                // Go to End Screen immediately
+                endGame(true); 
+            } else {
+                // If not solved, schedule the next letter
+                if (isAutoSolving) {
+                    autoSolveLoop(); // Recursive call to schedule the next one
+                }
+            }
+        }
+        
+        /**
+         * Schedules the next letter revelation with a random delay
+         */
+        function autoSolveLoop() {
+            if (lettersToRevealQueue.length === 0 || !isAutoSolving) {
+                // Should not happen if flow is correct, but safety guard
+                return;
+            }
+
+            const nextLetter = lettersToRevealQueue.shift();
+            // Random delay between 800ms and 1000ms (0.8s - 1.0s)
+            const delay = Math.random() * (1000 - 800) + 800; 
+            
+            autoSolveTimeoutId = setTimeout(() => {
+                 autoSolveLetter(nextLetter); 
+            }, delay);
+        }
+        
+        /**
+         * Initializes the auto-solve sequence for a new word
+         */
+        function startAutoSolve() {
+            if (!isAutoModeActive) return;
+
+            // 1. Identify all unique letters not yet guessed
+            const uniqueLetters = new Set();
+            for (const letter of currentWord) {
+                const char = letter.toUpperCase();
+                // We only care about letters A-Z
+                if (char >= 'A' && char <= 'Z' && !guessedLetters.has(char)) {
+                    uniqueLetters.add(char);
+                }
+            }
+            
+            lettersToRevealQueue = Array.from(uniqueLetters);
+            shuffle(lettersToRevealQueue); // Shuffle for random order as requested
+            
+            // If the word has no letters to guess (already revealed, or only spaces)
+            if (lettersToRevealQueue.length === 0) {
+                totalScore++;
+                scoreEl.textContent = `คะแนน: ${totalScore}/${wordQueue.length}`;
+                setTimeout(() => endGame(true), 500); 
+                return;
+            }
+
+            // 2. Start the continuous loop
+            isAutoSolving = true;
+            autoSolveLoop();
+        }
+
+
         // --- GAME FLOW & UI ---
         
         function clearAutoAdvance() {
+             // Clear the word-to-word advance timer 
              if (autoAdvanceTimeout) {
                  clearTimeout(autoAdvanceTimeout);
                  autoAdvanceTimeout = null;
@@ -881,73 +1014,65 @@
             });
             document.getElementById(id).classList.add('active');
             window.speechSynthesis.cancel();
-            clearAutoAdvance(); // Clear timeout whenever screen is changed
+            clearAutoAdvance(); 
         }
         
-        function startAutoAdvance(isWin) {
-             const hasNext = (currentWordIndex + 1) < wordQueue.length;
-             
-             if (isWin) {
-                // For Win Condition: Auto Advance / Auto Back Home
-                const utterance = speakText(currentWordDetails.word, 'en-US');
-                
-                if (utterance) {
-                    utterance.onend = () => {
-                         if (hasNext) {
-                             // Auto advance to next word
-                             autoAdvanceTimeout = setTimeout(() => {
-                                 restartBtn.click(); 
-                             }, 3000); 
-                         } else {
-                             // Auto back to home
-                             autoAdvanceTimeout = setTimeout(() => {
-                                 backHomeBtn.click(); 
-                             }, 3000); 
-                         }
-                    };
-                } else if (hasNext) {
-                    // Fallback if speech fails
-                    autoAdvanceTimeout = setTimeout(() => {
-                       restartBtn.click(); 
-                    }, 3000); 
-                } else {
-                    // If no next word and speech failed
-                    autoAdvanceTimeout = setTimeout(() => {
-                       backHomeBtn.click(); 
-                    }, 3000); 
-                }
-             } else {
-                 // For Loss Condition: Only speak once and stop
-                 speakText(currentWordDetails.word, 'en-US');
-             }
-        }
+        // New function to handle pronunciation and 2-second delay auto-advance (Req #3)
+        function handleEndScreenAdvance() {
+            // Pronounce the word
+            const utterance = speakText(currentWordDetails.word, 'en-US');
+            const advanceDelay = 2000; // 2 seconds delay as requested
+            
+            const scheduleAdvance = () => {
+                 autoAdvanceTimeout = setTimeout(() => {
+                     currentWordIndex++; // Advance index
+                     showScreen('game-screen'); 
+                     loadNextWord(); // Load next word
+                 }, advanceDelay); 
+            };
 
+            // Schedule advance AFTER speech is finished
+            if (utterance) {
+                 // Disable buttons while waiting for auto-advance
+                 restartBtn.disabled = true; 
+                 backHomeBtn.disabled = true;
+                 utterance.onend = scheduleAdvance;
+            } else {
+                 // If speech fails/is unsupported, just use the delay
+                 scheduleAdvance();
+            }
+        }
 
         function startSession(category) {
             currentCategory = category;
             
-            // 1. กรองคำศัพท์ตามหมวดหมู่
             let availableWords;
-            const randomCategoryName = "สุ่มรวมทุกหมวด";
-            if (category === randomCategoryName) {
-                // กรองคำที่ไม่ได้อยู่ในหมวด 'สุ่ม 20 คำ (Random Mix)' ออก
-                availableWords = wordData.filter(d => d.category !== "สุ่ม 20 คำ (Random Mix)");
+            const allCategoryName = "สุ่มรวมทุกหมวด";
+            const randomMixCategoryName = "สุ่ม 20 คำ (Random Mix)"; 
+
+            // FIX: Correctly filter words (Req #1)
+            if (category === allCategoryName) {
+                // Get ALL words (120 total)
+                availableWords = wordData; 
             } else {
-                availableWords = wordData.filter(d => d.category === category || d.category === randomCategoryName);
+                // Get words ONLY from the selected category
+                availableWords = wordData.filter(d => d.category === category);
             }
 
-            if (availableWords.length === 0) {
+            // Remove duplicates and Shuffle 
+            const uniqueWords = [...new Set(availableWords)];
+
+            if (uniqueWords.length === 0) {
                 alert("No words available for this category!");
                 showScreen('start-screen');
                 return;
             }
 
-            wordQueue = [...availableWords];
+            wordQueue = uniqueWords;
             shuffle(wordQueue);
             currentWordIndex = 0;
             totalScore = 0;
             
-            // การเปลี่ยนหน้าจอ
             showScreen('game-screen'); 
 
             loadNextWord(); 
@@ -955,7 +1080,7 @@
         
         function loadNextWord() {
             if (currentWordIndex >= wordQueue.length) {
-                endSession(); 
+                endSession(true); 
                 return;
             }
             
@@ -967,11 +1092,12 @@
             lives = MAX_LIVES;
             guessedLetters.clear();
             hintUsed = false; 
+            stopAutoSolve(); 
 
             // 3. Update UI
             drawHangman(lives); 
             updateWordDisplay();
-            generateKeyboard();
+            generateKeyboard(); 
             
             categoryTitleEl.textContent = `หมวดหมู่: ${currentCategory}`;
             livesLeftEl.textContent = `โอกาส: ${lives}`;
@@ -979,70 +1105,104 @@
             
             // 4. Update Hints 
             hintMeaningDisplayEl.textContent = currentWordDetails.descriptiveHint; 
-            hintMeaningDisplayEl.style.display = 'none'; // ซ่อนข้อความ
-            showHintBtn.style.display = 'inline-block'; // แสดงปุ่ม
-            showHintBtn.disabled = false;
+            hintMeaningDisplayEl.style.display = 'none'; 
+            showHintBtn.style.display = 'inline-block'; 
+            showHintBtn.disabled = false; // Ensure hint button is always enabled in game
             
-            // แทนที่คำศัพท์ด้วย ___ ในประโยคตัวอย่าง
             const blankedExample = currentWordDetails.example.replace(new RegExp(currentWordDetails.word, 'gi'), '___');
             hintExampleEl.textContent = blankedExample;
             
-            // 5. Enable buttons (Important for when restarting from End Screen)
+            // 5. Ensure buttons are visible/enabled (Req #2)
+            giveUpBtn.style.display = 'block'; 
             giveUpBtn.disabled = false;
+
+            // 6. Start auto-solve if active
+            if (isAutoModeActive) {
+                startAutoSolve();
+            }
         }
 
         function endGame(isWin) {
+            stopAutoSolve(); 
+            window.speechSynthesis.cancel(); // Cancel any current speech
+
+            const hasNext = (currentWordIndex + 1) < wordQueue.length;
+            
             // 1. Reveal the full word (for display)
             updateWordDisplay(true); 
             
             // 2. Handle score and message
-            if (isWin) {
-                totalScore++;
-                endMessageEl.textContent = "🥳 ยอดเยี่ยม! คุณชนะแล้ว!";
+            if (isAutoModeActive) {
+                endMessageEl.textContent = hasNext ? "✅ เฉลยคำศัพท์เสร็จสมบูรณ์" : "🥳 จบเซสชั่น! สรุปผลการเฉลยอัตโนมัติ";
                 endMessageEl.style.color = 'var(--color-correct)'; 
             } else {
-                endMessageEl.textContent = "😭 น่าเสียดาย! คุณแพ้แล้ว!";
-                endMessageEl.style.color = 'var(--color-wrong)'; 
+                endMessageEl.textContent = isWin ? "🥳 ยอดเยี่ยม! คุณชนะแล้ว!" : "😭 น่าเสียดาย! คุณแพ้แล้ว!";
+                endMessageEl.style.color = isWin ? 'var(--color-correct)' : 'var(--color-wrong)';
             }
-            endDetailsEl.textContent = `คะแนนรวมของเซสชั่น: ${totalScore}/${wordQueue.length} คำ`;
+            
+            endDetailsEl.textContent = `คำที่ ${currentWordIndex + 1}/${wordQueue.length} | คะแนนรวม: ${totalScore} คำ`;
             
             // 3. Reveal final word details
             finalWordRevealEl.textContent = currentWordDetails.word;
             finalMeaningRevealEl.innerHTML = `(${currentWordDetails.pos}) ${currentWordDetails.descriptiveHint}.<br>ตัวอย่าง: ${currentWordDetails.example}`; 
             
-            // 4. Check for next word / session end
-            const hasNext = (currentWordIndex + 1) < wordQueue.length;
+            // 4. Update buttons for end screen
+            restartBtn.textContent = hasNext ? `เล่นข้อต่อไป >> (${currentWordIndex + 2} / ${wordQueue.length})` : "จบเซสชั่น / กลับหน้าหลัก"; 
+            restartBtn.disabled = false;
+            backHomeBtn.disabled = false;
+            backHomeBtn.style.display = 'block'; 
+
+            // Re-bind click handlers for manual flow (The handler is only triggered if auto-advance is NOT active)
+            restartBtn.removeEventListener('click', restartBtnManualHandler);
+            restartBtn.removeEventListener('click', endSession);
             
-            if (hasNext) {
-                restartBtn.textContent = `เล่นข้อต่อไป >> (${currentWordIndex + 1 + 1} / ${wordQueue.length})`;
-                backHomeBtn.style.display = 'block'; // Show back home button
+            // If it's the last word, the button always leads home
+            if(!hasNext) {
+                 restartBtn.addEventListener('click', endSession);
             } else {
-                restartBtn.textContent = "กลับหน้าหลัก"; // Change text to back home
-                backHomeBtn.style.display = 'none'; // Hide the dedicated back home button
+                 // For next word, use the manual handler
+                 restartBtn.addEventListener('click', restartBtnManualHandler);
             }
             
             showScreen('end-screen');
-
-            // 5. NEW: Auto Advance Logic (Start speaking and setting up the timer)
-            startAutoAdvance(isWin);
+            
+            // 5. Auto Advance Logic (Req #3 - only on Win + hasNext)
+            const shouldAutoAdvance = isWin && hasNext; 
+            if (shouldAutoAdvance) {
+                handleEndScreenAdvance();
+            }
+            
+            // 6. Manual pronunciation (if not auto-advancing, to let user listen)
+            if (!shouldAutoAdvance) {
+                 speakText(currentWordDetails.word, 'en-US'); 
+            }
         }
 
         // จัดการเมื่อเซสชั่นจบ
-        function endSession() {
+        function endSession(isFinished = false) {
              window.speechSynthesis.cancel();
-             clearAutoAdvance(); // Clear any running auto-advance timer
+             clearAutoAdvance(); 
+             stopAutoSolve(); 
+             
+             // Reset robot mode in case it was active
+             isAutoModeActive = false;
+             gameTitleEl.classList.remove('robot-active');
+             
              wordQueue = []; 
              currentWordIndex = 0;
+             totalScore = 0; // Reset total score for next session
              showScreen('start-screen');
         }
         
         function setupCategoryButtons() {
-            // กรองหมวดหมู่ทั้งหมด ยกเว้น 'สุ่ม 20 คำ (Random Mix)' 
-            const categoriesForButton = [...new Set(wordData.map(d => d.category))].filter(cat => cat !== "สุ่ม 20 คำ (Random Mix)");
+            // Get unique category names excluding the internal Random Mix category
+            const randomMixInternalName = "สุ่ม 20 คำ (Random Mix)";
+            const categoriesForButton = [...new Set(wordData.map(d => d.category))].filter(cat => cat !== randomMixInternalName);
 
             categorySelection.innerHTML = '';
             
             categoriesForButton.forEach(category => {
+                // Only count words in that specific category
                 const count = wordData.filter(d => d.category === category).length;
                 const btn = document.createElement('button');
                 btn.className = 'main-btn';
@@ -1054,81 +1214,82 @@
             
             // Add "Random from ALL" button
             const totalWords = wordData.length;
-            const randomCategoryName = "สุ่มรวมทุกหมวด";
+            const allCategoryName = "สุ่มรวมทุกหมวด";
             const randomBtn = document.createElement('button');
             randomBtn.className = 'main-btn btn-random';
-            randomBtn.textContent = `${randomCategoryName} (All Words Mix: ${totalWords} คำ)`;
+            randomBtn.textContent = `${allCategoryName} (All Words Mix: ${totalWords} คำ)`;
             
-            randomBtn.addEventListener('click', () => startSession(randomCategoryName)); 
+            randomBtn.addEventListener('click', () => startSession(allCategoryName)); 
             
             categorySelection.appendChild(randomBtn);
         }
-
-
+        
+        // Manual Play Next Word Handler (used when auto-advance is not running/needed)
+        function restartBtnManualHandler() {
+             window.speechSynthesis.cancel();
+             clearAutoAdvance(); 
+             
+             // This is for manual flow's end screen click
+             currentWordIndex++; 
+             if (currentWordIndex < wordQueue.length) {
+                 showScreen('game-screen'); 
+                 loadNextWord();
+             } else {
+                 // End of session, redirect to home
+                 endSession(true);
+             }
+        }
+        
         // --- EVENT LISTENERS ---
         
+        // NEW: Double-click/Double-tap on Game Title for Secret Mode
+        gameTitleEl.addEventListener('dblclick', () => {
+             stopAutoSolve(); 
+             
+             // Toggle mode
+             isAutoModeActive = !isAutoModeActive;
+             gameTitleEl.classList.toggle('robot-active', isAutoModeActive);
+            
+            if (isAutoModeActive) {
+                alert("🤖 โหมดเฉลยอัตโนมัติเปิดใช้งานแล้ว! ระบบจะทำการเฉลยคำศัพท์เมื่อเริ่มเกม");
+                
+                // If a game is currently active, start the auto-solve
+                if (gameScreen.classList.contains('active')) {
+                     loadNextWord(); // Re-load to start solve
+                }
+            } else {
+                alert("👤 โหมดเฉลยอัตโนมัติปิดใช้งานแล้ว! กลับสู่การเล่นด้วยตัวเอง.");
+                
+                // If a game is currently active, re-enable manual interaction
+                if (gameScreen.classList.contains('active')) {
+                     loadNextWord(); // Re-load to enable UI
+                }
+            }
+        });
+        
+        // Final Pronounce Button (manual click to listen again)
         finalPronounceBtn.addEventListener('click', () => {
-             // Clear the current timer and re-speak
              clearAutoAdvance(); 
+             restartBtn.disabled = false; // Ensure buttons are clickable if auto advance was pending
+             backHomeBtn.disabled = false;
+             
              if (currentWordDetails && currentWordDetails.word) {
-                 const utterance = speakText(currentWordDetails.word, 'en-US');
-                 
-                 // If it was a win, restart the timer after re-speaking
-                 if (endMessageEl.textContent.includes('ชนะ') && utterance) {
-                     utterance.onend = () => {
-                         startAutoAdvance(true);
-                     };
-                 }
+                 speakText(currentWordDetails.word, 'en-US');
              }
         });
         
-        showHintBtn.addEventListener('click', () => {
-            if (!hintUsed && currentWordDetails) {
-                hintMeaningDisplayEl.style.display = 'inline'; // แสดงข้อความคำใบ้
-                showHintBtn.style.display = 'none'; // ซ่อนปุ่ม
-                hintUsed = true;
-                playPing(); 
+        // Logic for Give Up Button (Manual/Auto to go back home)
+        giveUpBtn.addEventListener('click', () => {
+            if(confirm("คุณต้องการยอมแพ้และกลับสู่หน้าหลักหรือไม่?")) {
+                endSession(); 
             }
         });
-
-        // Logic for Give Up Button (No confirm, full hangman, 1s delay)
-        giveUpBtn.addEventListener('click', () => {
-            // Show all parts immediately (full hangman - loss condition)
-            drawHangman(0); 
-            livesLeftEl.textContent = `โอกาส: 0`;
-            
-            // Disable buttons to prevent further interaction
-            keyboardEl.querySelectorAll('.key-btn').forEach(btn => btn.disabled = true);
-            showHintBtn.disabled = true;
-            giveUpBtn.disabled = true;
-
-            // Wait 1 second before going to the end screen/session end
-            setTimeout(() => {
-                // Technically it's a loss, but we skip the end screen and go to start.
-                endSession(); 
-            }, 1000); 
-        });
         
-        // Back Home Button Listener
+        // Back Home Button Listener (End Screen)
         backHomeBtn.addEventListener('click', () => {
             endSession();
         });
 
-
-        restartBtn.addEventListener('click', () => {
-             window.speechSynthesis.cancel();
-             clearAutoAdvance(); // MUST clear the timeout
-             
-             currentWordIndex++; 
-
-             if (currentWordIndex < wordQueue.length) {
-                 showScreen('game-screen'); // ต้องเรียกเพื่อกลับจาก end-screen
-                 loadNextWord();
-             } else {
-                 // End of session, redirect to home
-                 endSession();
-             }
-        });
 
         // --- INITIALIZATION ---
         document.addEventListener('DOMContentLoaded', () => {
