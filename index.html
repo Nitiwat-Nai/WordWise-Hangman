@@ -1173,16 +1173,21 @@
             
             showScreen('end-screen');
             
-            // 5. **FIX #1:** Manual pronunciation (always read once upon reaching the End Screen)
+            // 5. **FIXED (1 & 2):** Handle pronunciation (automatically read once upon reaching the End Screen)
             if (currentWordDetails && currentWordDetails.word) {
-                speakText(currentWordDetails.word, 'en-US'); 
-            }
-            
-            // 6. Auto Advance Logic (Only for Auto-Solve Win)
-            const shouldAutoAdvance = isWin && hasNext && isAutoModeActive; 
-            if (shouldAutoAdvance) {
-                // Use the modified function with fixed delay
-                handleEndScreenAdvance();
+                const shouldAutoAdvance = isWin && hasNext && isAutoModeActive;
+                
+                if (shouldAutoAdvance) {
+                    // Auto Advance mode: handleEndScreenAdvance manages the speech + next word transition.
+                    // This prevents double-reading (Issue #2).
+                    handleEndScreenAdvance();
+                } else {
+                    // Manual mode: Read the word after a short delay for browser to establish new screen context.
+                    // This fixes the issue where speech fails to start automatically (Issue #1).
+                    setTimeout(() => {
+                        speakText(currentWordDetails.word, 'en-US');
+                    }, 50); // 50ms delay
+                }
             }
         }
 
