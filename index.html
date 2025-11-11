@@ -440,7 +440,7 @@
                         </g>
                         <g id="right-eye" class="hangman-part" style="display:none;">
                             <line x1="144" y1="52" x2="152" y2="58" stroke="var(--color-wrong)" stroke-width="2"/>
-                            <line x1="144" y1="58" y2="152" x2="52" stroke="var(--color-wrong)" stroke-width="2"/>
+                            <line x1="144" y1="58" x2="152" y2="52" stroke="var(--color-wrong)" stroke-width="2"/>
                         </g>
 
                     </g>
@@ -1017,30 +1017,28 @@
             clearAutoAdvance(); 
         }
         
-        // New function to handle pronunciation and 2-second delay auto-advance (Req #3)
+        /**
+         * **FIXED:** Function to handle pronunciation and 2-second delay auto-advance
+         * Relies on a fixed 4.5 second delay (Speech Time + 2s pause) for reliability, 
+         * instead of the unreliable `utterance.onend` event.
+         */
         function handleEndScreenAdvance() {
-            // Pronounce the word
-            const utterance = speakText(currentWordDetails.word, 'en-US');
-            const advanceDelay = 2000; // 2 seconds delay as requested
-            
-            const scheduleAdvance = () => {
-                 autoAdvanceTimeout = setTimeout(() => {
-                     currentWordIndex++; // Advance index
-                     showScreen('game-screen'); 
-                     loadNextWord(); // Load next word
-                 }, advanceDelay); 
-            };
+            const totalDelay = 4500; // Fixed total delay (e.g., Speech ~2.5s + Pause 2.0s)
 
-            // Schedule advance AFTER speech is finished
-            if (utterance) {
-                 // Disable buttons while waiting for auto-advance
-                 restartBtn.disabled = true; 
-                 backHomeBtn.disabled = true;
-                 utterance.onend = scheduleAdvance;
-            } else {
-                 // If speech fails/is unsupported, just use the delay
-                 scheduleAdvance();
-            }
+            // 1. Start Pronunciation immediately
+            speakText(currentWordDetails.word, 'en-US');
+            
+            // 2. Disable buttons while waiting for auto-advance
+            restartBtn.disabled = true; 
+            backHomeBtn.disabled = true;
+
+            // 3. Schedule the advance after the fixed delay
+            autoAdvanceTimeout = setTimeout(() => {
+                 window.speechSynthesis.cancel(); // Stop any residual speech
+                 currentWordIndex++; // Advance index
+                 showScreen('game-screen'); 
+                 loadNextWord(); // Load next word
+            }, totalDelay); 
         }
 
         function startSession(category) {
@@ -1050,7 +1048,7 @@
             const allCategoryName = "สุ่มรวมทุกหมวด";
             const randomMixCategoryName = "สุ่ม 20 คำ (Random Mix)"; 
 
-            // FIX: Correctly filter words (Req #1)
+            // FIX: Correctly filter words (Req #1 - from previous request)
             if (category === allCategoryName) {
                 // Get ALL words (120 total)
                 availableWords = wordData; 
@@ -1112,7 +1110,7 @@
             const blankedExample = currentWordDetails.example.replace(new RegExp(currentWordDetails.word, 'gi'), '___');
             hintExampleEl.textContent = blankedExample;
             
-            // 5. Ensure buttons are visible/enabled (Req #2)
+            // 5. Ensure buttons are visible/enabled (Req #2 - from previous request)
             giveUpBtn.style.display = 'block'; 
             giveUpBtn.disabled = false;
 
@@ -1166,9 +1164,11 @@
             
             showScreen('end-screen');
             
-            // 5. Auto Advance Logic (Req #3 - only on Win + hasNext)
-            const shouldAutoAdvance = isWin && hasNext; 
+            // 5. Auto Advance Logic (Req #3 - FIXED for reliability)
+            const shouldAutoAdvance = isWin && hasNext && isAutoModeActive; 
+            
             if (shouldAutoAdvance) {
+                // Use the modified function with fixed delay
                 handleEndScreenAdvance();
             }
             
