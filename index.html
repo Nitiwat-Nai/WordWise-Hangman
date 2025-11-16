@@ -66,9 +66,8 @@
             cursor: pointer; 
             transition: color 0.2s;
         }
-        /* Style when secret mode is active */
+        /* Style when secret mode is active (FIX: Removed color change) */
         header h1.robot-active {
-            color: var(--color-auto-active);
             animation: pulse 1s infinite alternate;
         }
         
@@ -881,8 +880,7 @@
                     showHintBtn.disabled = true;
                     giveUpBtn.disabled = true;
                     
-                    // **FIX #2:** Show word on game screen for 0.5s before going to End Screen
-                    // We call updateWordDisplay(true) inside endGame, so we only need the delay here.
+                    // **FIX #2:** Delay 0.5s before going to End Screen
                     setTimeout(() => {
                         endGame(true); 
                     }, 500); 
@@ -933,7 +931,7 @@
             // 1. Add and process the letter
             if (!guessedLetters.has(charUpper)) {
                 guessedLetters.add(charUpper);
-                updateKeyboard(charUpper, true); // <--- Key turns GREEN (Req #2)
+                updateKeyboard(charUpper, true); 
             }
             
             // 2. Update display
@@ -941,13 +939,16 @@
             playPing(); 
             
             if (solved) {
-                // Word solved. Stop the loop, add score, and go to End Screen (Req #3)
+                // Word solved. Stop the loop, add score, and go to End Screen
                 stopAutoSolve(); 
                 totalScore++; // Update score
                 scoreEl.textContent = `คะแนน: ${totalScore}/${wordQueue.length}`; 
                 
-                // Go to End Screen immediately
-                endGame(true); 
+                // **FIX #2:** Go to End Screen after 0.5s delay
+                 setTimeout(() => {
+                    endGame(true); 
+                 }, 500);
+                 
             } else {
                 // If not solved, schedule the next letter
                 if (isAutoSolving) {
@@ -1027,9 +1028,7 @@
         }
         
         /**
-         * **FIXED:** Function to handle pronunciation and 2-second delay auto-advance
-         * Relies on a fixed 4.5 second delay (Speech Time + 2s pause) for reliability, 
-         * instead of the unreliable `utterance.onend` event.
+         * Function to handle pronunciation and 2-second delay auto-advance
          */
         function handleEndScreenAdvance() {
             const totalDelay = 4500; // Fixed total delay (e.g., Speech ~2.5s + Pause 2.0s)
@@ -1057,7 +1056,7 @@
             const allCategoryName = "สุ่มรวมทุกหมวด";
             const randomMixInternalName = "สุ่ม 20 คำ (Random Mix)"; 
 
-            // FIX: Correctly filter words (Req #1 - from previous request)
+            // FIX: Correctly filter words 
             if (category === allCategoryName) {
                 // Get ALL words (120 total)
                 availableWords = wordData; 
@@ -1110,16 +1109,16 @@
             livesLeftEl.textContent = `โอกาส: ${lives}`;
             scoreEl.textContent = `คะแนน: ${totalScore}/${wordQueue.length}`;
             
-            // 4. Update Hints 
-            hintMeaningDisplayEl.textContent = currentWordDetails.descriptiveHint; 
-            hintMeaningDisplayEl.style.display = 'none'; 
-            showHintBtn.style.display = 'inline-block'; 
-            showHintBtn.disabled = false; // Ensure hint button is always enabled in game
+            // 4. Update Hints (Reset)
+            hintMeaningDisplayEl.textContent = `[${currentWordDetails.pos}] ${currentWordDetails.descriptiveHint}`; 
+            hintMeaningDisplayEl.style.display = 'none'; // Hide the hint text
+            showHintBtn.style.display = 'inline-block'; // Show the button
+            showHintBtn.disabled = false; // Enable the button
             
             const blankedExample = currentWordDetails.example.replace(new RegExp(currentWordDetails.word, 'gi'), '___');
             hintExampleEl.textContent = blankedExample;
             
-            // 5. Ensure buttons are visible/enabled (Req #2 - from previous request)
+            // 5. Ensure buttons are visible/enabled
             giveUpBtn.style.display = 'block'; 
             giveUpBtn.disabled = false;
 
@@ -1173,17 +1172,15 @@
             
             showScreen('end-screen');
             
-            // 5. **FIXED (1 & 2):** Handle pronunciation (automatically read once upon reaching the End Screen)
+            // 5. Handle pronunciation
             if (currentWordDetails && currentWordDetails.word) {
                 const shouldAutoAdvance = isWin && hasNext && isAutoModeActive;
                 
                 if (shouldAutoAdvance) {
                     // Auto Advance mode: handleEndScreenAdvance manages the speech + next word transition.
-                    // This prevents double-reading (Issue #2).
                     handleEndScreenAdvance();
                 } else {
                     // Manual mode: Read the word after a short delay for browser to establish new screen context.
-                    // This fixes the issue where speech fails to start automatically (Issue #1).
                     setTimeout(() => {
                         speakText(currentWordDetails.word, 'en-US');
                     }, 50); // 50ms delay
@@ -1197,7 +1194,7 @@
              clearAutoAdvance(); 
              stopAutoSolve(); 
              
-             // Reset robot mode in case it was active
+             // Reset robot mode visual state
              isAutoModeActive = false;
              gameTitleEl.classList.remove('robot-active');
              
@@ -1255,12 +1252,23 @@
         
         // --- EVENT LISTENERS ---
         
-        // NEW: Double-click/Double-tap on Game Title for Secret Mode
+        // **FIX #1:** Hint Button Logic
+        showHintBtn.addEventListener('click', () => {
+            if (!hintUsed) {
+                hintUsed = true;
+                showHintBtn.disabled = true;
+                showHintBtn.style.display = 'none'; // Hide the button
+                hintMeaningDisplayEl.style.display = 'block'; // Show the hint text
+            }
+        });
+        
+        // Double-click/Double-tap on Game Title for Secret Mode
         gameTitleEl.addEventListener('dblclick', () => {
              stopAutoSolve(); 
              
              // Toggle mode
              isAutoModeActive = !isAutoModeActive;
+             // **FIX #3:** Only toggle the class, the color is now inherited
              gameTitleEl.classList.toggle('robot-active', isAutoModeActive);
             
             if (isAutoModeActive) {
