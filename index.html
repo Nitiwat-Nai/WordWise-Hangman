@@ -42,7 +42,7 @@
         .container {
             width: 100%;
             max-width: 480px;
-            min-height: 100vh; /* Full height on mobile */
+            min-height: 100vh;
             box-sizing: border-box;
             background: var(--glass-bg);
             backdrop-filter: blur(10px);
@@ -109,7 +109,7 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Shake Animation for Wrong Guess */
+        /* Shake Animation */
         .shake {
             animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
         }
@@ -163,7 +163,6 @@
             max-height: 65vh;
             padding: 5px;
         }
-        /* Custom Scrollbar */
         .btn-group::-webkit-scrollbar { width: 6px; }
         .btn-group::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
 
@@ -180,7 +179,6 @@
             color: var(--color-text-secondary);
         }
 
-        /* Hangman SVG */
         #hangman-word-area {
             display: flex;
             flex-direction: column;
@@ -190,9 +188,12 @@
             justify-content: center;
         }
         #hangman-svg {
-            width: 180px;
-            height: 180px;
-            overflow: visible;
+            width: 35vw; 
+            max-width: 180px; 
+            height: 35vw;
+            max-height: 180px;
+            margin-bottom: 0.5rem; 
+            overflow: visible; 
             filter: drop-shadow(0 0 10px rgba(255,255,255,0.1));
         }
         #hangman-svg line, #hangman-svg circle, #hangman-svg path {
@@ -205,7 +206,6 @@
         .hangman-part { stroke: #f6e05e !important; stroke-width: 4; }
         .hangman-part.head { fill: #f6e05e !important; stroke: none !important; }
 
-        /* Word Display */
         #word-display {
             display: flex;
             justify-content: center;
@@ -229,7 +229,7 @@
         .letter-slot:not(.placeholder) {
             border-bottom-color: transparent;
             animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            color: #48bb78; /* Green for solved letters */
+            color: #48bb78; 
         }
         @keyframes popIn {
             0% { transform: scale(0); opacity: 0; }
@@ -237,13 +237,12 @@
             100% { transform: scale(1); opacity: 1; }
         }
 
-        /* Hint Box */
         #hint-box {
             background: rgba(0, 0, 0, 0.3);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 12px;
             padding: 1rem;
-            margin-bottom: 1rem;
+            margin-bottom: 0.75rem; 
             text-align: left;
             font-size: 0.95rem;
             color: var(--color-text-secondary);
@@ -260,11 +259,10 @@
             box-shadow: 0 2px 8px rgba(240, 147, 251, 0.4);
         }
 
-        /* Keyboard */
         #keyboard {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: 6px;
+            gap: 6px; 
             padding: 0 5px 10px;
         }
         .key-btn {
@@ -278,12 +276,13 @@
             cursor: pointer;
             transition: all 0.1s;
         }
-        .key-btn:active { transform: scale(0.9); background: rgba(255,255,255,0.2); }
+        .key-btn:active, .key-btn.simulated-press { 
+            transform: scale(0.9); 
+            background: rgba(255,255,255,0.2); 
+        }
         .key-btn.correct { background: var(--color-correct); border-color: var(--color-correct); box-shadow: 0 0 10px rgba(46, 204, 113, 0.4); }
         .key-btn.wrong { background: var(--color-wrong); border-color: var(--color-wrong); opacity: 0.6; }
-        .keyboard-hidden { display: none !important; }
-
-        /* Give Up Button */
+        
         #give-up-btn {
             background: transparent;
             border: 2px solid #e74c3c;
@@ -299,6 +298,7 @@
         #end-screen {
             justify-content: center;
             text-align: center;
+            padding-top: 2rem;
         }
         #end-screen h2 { font-size: 2.2rem; margin-bottom: 0.5rem; }
         #word-review {
@@ -424,7 +424,7 @@
         const wordData = [
             { word: "FIG", category: "ผลไม้", descriptiveHint: "ผลไม้เล็กๆ เปลือกเขียว/ม่วง ข้างในมีเม็ดเล็กๆ", pos: "(N.)", example: "I had a dried fig for breakfast." },
             { word: "LIME", category: "ผลไม้", descriptiveHint: "ผลไม้รสเปรี้ยว เปลือกเขียว ใช้ทำเครื่องดื่ม", pos: "(N.)", example: "Squeeze lime into the water." },
-            { word: "KIWI", category: "ผลไม้", descriptiveHint: "ผลไม้มีขน เนื้อสีเขียวสดใส", pos: "(N.)", example: "Kiwi is great in fruit salad." },
+            { word: "KIWI", category: "ผลไม้", descriptiveHint: "ผลไม้เล็กๆ มีขนปกคลุมข้างนอก เนื้อด้านในสีเขียวสดใส", pos: "(N.)", example: "Kiwi is great in fruit salad." },
             { word: "GRAPE", category: "ผลไม้", descriptiveHint: "ผลไม้ลูกเล็กๆ เป็นพวง ใช้ทำไวน์", pos: "(N.)", example: "A bunch of sweet green grapes." },
             { word: "MANGO", category: "ผลไม้", descriptiveHint: "ผลไม้เขตร้อน หวานฉ่ำ สีเหลือง", pos: "(N.)", example: "Ripe mango is very sweet." },
             { word: "APPLE", category: "ผลไม้", descriptiveHint: "ผลไม้กลม สีแดง/เขียว ยอดนิยม", pos: "(N.)", example: "An apple a day." },
@@ -458,7 +458,6 @@
             { word: "HAPPY", category: "สุ่ม 20 คำ (Random Mix)", descriptiveHint: "มีความสุข (Adjective)", pos: "(Adj.)", example: "I am happy." },
             { word: "WATER", category: "สุ่ม 20 คำ (Random Mix)", descriptiveHint: "ของเหลวใส จำเป็นต่อชีวิต", pos: "(N.)", example: "Drink water." }
         ];
-        // Note: Shortened data for brevity in code block, logic supports full list.
 
         // --- VARS ---
         const hangmanSvgParts = ["head", "body", "left-arm", "right-arm", "left-leg", "right-leg", "left-eye", "right-eye"];
@@ -566,20 +565,17 @@
         function generateKeyboard() {
             const keyboard = document.getElementById('keyboard');
             keyboard.innerHTML = '';
-            if (isAutoModeActive) {
-                keyboard.classList.add('keyboard-hidden');
-                return;
-            }
-            keyboard.classList.remove('keyboard-hidden');
+            // REMOVED: Keyboard hiding logic to show keys in auto mode
 
             for (let i = 65; i <= 90; i++) {
                 const char = String.fromCharCode(i);
                 const btn = document.createElement('button');
                 btn.textContent = char;
                 btn.className = 'key-btn';
+                btn.setAttribute('data-char', char); // Helper for finding button
                 btn.onclick = () => handleManualGuess(char, btn);
                 
-                // Restore state if revisiting word (rare in this flow but safe)
+                // Restore state if revisiting word
                 if (guessedLetters.has(char)) {
                     btn.disabled = true;
                     btn.classList.add(currentWord.includes(char) ? 'correct' : 'wrong');
@@ -626,8 +622,11 @@
 
         function disableControls() {
             document.querySelectorAll('.key-btn').forEach(b => b.disabled = true);
-            document.getElementById('show-hint-btn').disabled = true;
-            document.getElementById('give-up-btn').disabled = true;
+            // In manual mode we disable hint/giveup on end
+            if(!isAutoModeActive) {
+                document.getElementById('show-hint-btn').disabled = true;
+                document.getElementById('give-up-btn').disabled = true;
+            }
         }
 
         // --- AUTO SOLVE LOGIC ---
@@ -639,6 +638,11 @@
             lettersToRevealQueue = letters;
             shuffle(lettersToRevealQueue);
             
+            // Auto Trigger Hint
+            setTimeout(() => {
+                document.getElementById('show-hint-btn').click();
+            }, 300);
+
             isAutoSolving = true;
             autoSolveLoop();
         }
@@ -653,6 +657,18 @@
             autoSolveTimeoutId = setTimeout(() => {
                 guessedLetters.add(char);
                 playSound('correct');
+                
+                // Visual Button Press Effect
+                const btn = document.querySelector(`.key-btn[data-char="${char}"]`);
+                if(btn) {
+                    btn.classList.add('simulated-press'); // Add press effect
+                    setTimeout(() => {
+                        btn.classList.remove('simulated-press');
+                        btn.classList.add('correct'); // Then turn green
+                        btn.disabled = true;
+                    }, 150);
+                }
+
                 const solved = updateWordDisplay();
                 
                 if (solved) {
@@ -716,7 +732,7 @@
             document.getElementById('lives-left').innerText = `โอกาส: ${lives}`;
             document.getElementById('score').innerText = `คะแนน: ${totalScore}/${wordQueue.length}`;
             
-            // Hint Reset (Fix Bug #1)
+            // Hint Reset
             const hintDisplay = document.getElementById('hint-meaning-display');
             const hintBtn = document.getElementById('show-hint-btn');
             hintDisplay.style.display = 'none';
@@ -750,16 +766,21 @@
             restartBtn.onclick = hasNext ? nextWord : finishSession;
             document.getElementById('back-home-btn').onclick = finishSession;
             
+            // BUG FIX: Ensure buttons are enabled on last word in auto mode
+            if (isAutoModeActive && !hasNext) {
+                restartBtn.disabled = false;
+                document.getElementById('back-home-btn').disabled = false;
+            }
+            
             switchScreen('end-screen');
 
             // **LOGIC: Read Word & Auto Advance**
             // 1. Read immediately on entering screen (Manual & Auto)
-            // Timeout 50ms ensures screen transition is done
             setTimeout(() => {
                 speakText(currentWord, 'en-US');
             }, 50);
 
-            // 2. If Auto Mode, wait 4.5s (Reading time + 2s pause) then next
+            // 2. If Auto Mode AND Not Last Word, wait 4.5s then next
             if (isAutoModeActive && hasNext && isWin) {
                 // Disable buttons during auto-wait
                 restartBtn.disabled = true;
