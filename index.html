@@ -38,6 +38,7 @@
             overflow-x: hidden;
         }
 
+        /* --- CONTAINER WITH GLASSMORPHISM --- */
         .container {
             width: 100%;
             max-width: 480px;
@@ -80,14 +81,14 @@
             transition: all 0.3s ease;
         }
 
+        /* Secret Mode Animation */
         header h1.robot-active {
-            text-shadow: 0 0 10px rgba(150, 201, 61, 0.5);
-            animation: pulse-glow 1.5s infinite alternate;
+            animation: pulse 1s infinite alternate;
         }
-
-        @keyframes pulse-glow {
-            from { transform: scale(1); filter: brightness(1); }
-            to { transform: scale(1.05); filter: brightness(1.3); }
+        
+        @keyframes pulse {
+            from { transform: scale(1); opacity: 1; }
+            to { transform: scale(1.03); opacity: 0.8; }
         }
 
         /* --- SCREEN ANIMATIONS --- */
@@ -107,6 +108,7 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
+        /* Shake Animation */
         .shake {
             animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
         }
@@ -146,9 +148,10 @@
             box-shadow: 0 2px 0 #32A860;
         }
         .main-btn:disabled {
-            filter: grayscale(100%);
             opacity: 0.5;
             cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
         }
 
         /* --- START SCREEN --- */
@@ -329,35 +332,25 @@
         /* --- SUMMARY SCREEN --- */
         #summary-screen {
             justify-content: flex-start;
-            text-align: left;
+            padding-top: 2rem;
         }
         #summary-list {
             width: 100%;
             max-height: 60vh;
             overflow-y: auto;
             margin: 1rem 0;
-            padding-right: 5px;
+            padding: 0 10px;
+            text-align: left;
         }
-        /* Style the summary list items */
         .summary-item {
             background: rgba(255, 255, 255, 0.05);
-            margin-bottom: 10px;
-            padding: 10px;
             border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 8px;
             border-left: 4px solid var(--color-correct);
         }
-        .summary-item.failed {
-            border-left-color: var(--color-wrong);
-        }
-        .summary-word {
-            font-weight: bold;
-            font-size: 1.2rem;
-            color: var(--primary-grad);
-        }
-        .summary-mean {
-            font-size: 0.9rem;
-            color: var(--color-text-secondary);
-        }
+        .summary-word { font-weight: bold; font-size: 1.1rem; color: var(--color-correct); }
+        .summary-mean { font-size: 0.9rem; color: var(--color-text-secondary); }
 
     </style>
 </head>
@@ -371,8 +364,7 @@
         <div id="start-screen" class="screen active start-screen">
             <h2>พร้อมฝึกศัพท์ไหม?</h2>
             <p style="color: #a0aec0;">เลือกหมวดหมู่ด้านล่างเพื่อเริ่มเกม</p>
-            <div class="btn-group" id="category-selection">
-                </div>
+            <div class="btn-group" id="category-selection"></div>
         </div>
 
         <div id="game-screen" class="screen">
@@ -424,23 +416,19 @@
 
             <div id="keyboard"></div>
             
-            <button id="give-up-btn" class="main-btn">
-                ยอมแพ้ / กลับหน้าหลัก
-            </button>
+            <button id="give-up-btn" class="main-btn">ยอมแพ้ / กลับหน้าหลัก</button>
         </div>
         
         <div id="end-screen" class="screen">
             <div class="end-content">
                 <h2 id="end-message"></h2>
                 <p id="end-details" style="color: #a0aec0;"></p>
-                
                 <div id="word-review">
                     <div style="color: #a0aec0; font-size: 0.9rem;">คำศัพท์ที่ถูกต้อง</div>
                     <span id="final-word-reveal"></span>
                     <div id="final-meaning-reveal" style="color: #cbd5e0; margin-top: 5px;"></div>
                     <button id="final-pronounce-btn" class="pronounce-final-btn" title="ฟังเสียง">🔊</button>
                 </div>
-                
                 <div class="end-button-group">
                     <button id="restart-btn" class="main-btn" style="flex: 1; background: var(--primary-grad);">ข้อต่อไป</button> 
                     <button id="back-home-btn" class="main-btn" style="flex: 1; background: #4a5568; box-shadow: none;">ออก</button>
@@ -449,53 +437,192 @@
         </div>
 
         <div id="summary-screen" class="screen">
-            <h2 style="text-align: center;">สรุปผลการเล่น</h2>
-            <p id="summary-score" style="text-align: center; color: var(--color-correct); font-weight: bold;"></p>
-            <div id="summary-list">
-                </div>
-            <button id="summary-home-btn" class="main-btn" style="width: 100%; margin-top: 10px;">กลับสู่หน้าหลัก</button>
+            <h2>สรุปผลการเล่น</h2>
+            <div id="summary-list"></div>
+            <button id="summary-home-btn" class="main-btn" style="width: 100%;">กลับหน้าหลัก</button>
         </div>
-
     </div>
 
     <script>
-        // --- DATA ---
+        // --- DATA (13 Categories + Random = 14 total options) ---
         const wordData = [
-            { word: "FIG", category: "ผลไม้", descriptiveHint: "ผลไม้เล็กๆ เปลือกเขียว/ม่วง ข้างในมีเม็ดเล็กๆ", pos: "(N.)", example: "I had a dried fig for breakfast." },
-            { word: "LIME", category: "ผลไม้", descriptiveHint: "ผลไม้รสเปรี้ยว เปลือกเขียว ใช้ทำเครื่องดื่ม", pos: "(N.)", example: "Squeeze lime into the water." },
-            { word: "KIWI", category: "ผลไม้", descriptiveHint: "ผลไม้เล็กๆ มีขนปกคลุมข้างนอก เนื้อด้านในสีเขียวสดใส", pos: "(N.)", example: "Kiwi is great in fruit salad." },
-            { word: "GRAPE", category: "ผลไม้", descriptiveHint: "ผลไม้ลูกเล็กๆ เป็นพวง ใช้ทำไวน์", pos: "(N.)", example: "A bunch of sweet green grapes." },
-            { word: "MANGO", category: "ผลไม้", descriptiveHint: "ผลไม้เขตร้อน หวานฉ่ำ สีเหลือง", pos: "(N.)", example: "Ripe mango is very sweet." },
-            { word: "APPLE", category: "ผลไม้", descriptiveHint: "ผลไม้กลม สีแดง/เขียว ยอดนิยม", pos: "(N.)", example: "An apple a day." },
-            { word: "PEACH", category: "ผลไม้", descriptiveHint: "ผลไม้มีขนอ่อน สีชมพูอมส้ม", pos: "(N.)", example: "Sweet juicy peach." },
-            { word: "ORANGE", category: "ผลไม้", descriptiveHint: "ผลไม้รสเปรี้ยวอมหวาน วิตามินซีสูง", pos: "(N.)", example: "Fresh orange juice." },
-            { word: "BANANA", category: "ผลไม้", descriptiveHint: "ผลไม้ยาว สีเหลือง ลิงชอบกิน", pos: "(N.)", example: "Monkeys love bananas." },
-            { word: "CHERRY", category: "ผลไม้", descriptiveHint: "ผลไม้ลูกเล็กสีแดง บนเค้ก", pos: "(N.)", example: "Cherry on top." },
+            // 1. FRUIT
+            { word: "FIG", category: "ผลไม้", thai: "มะเดื่อ", descriptiveHint: "ผลไม้เล็กๆ เปลือกเขียว/ม่วง ข้างในมีเม็ด", pos: "(N.)", example: "I had a dried fig for breakfast." },
+            { word: "LIME", category: "ผลไม้", thai: "มะนาว", descriptiveHint: "ผลไม้รสเปรี้ยว เปลือกเขียว ใช้ทำเครื่องดื่ม", pos: "(N.)", example: "She squeezed a fresh lime into her water." },
+            { word: "KIWI", category: "ผลไม้", thai: "กีวี", descriptiveHint: "ผลไม้มีขน เนื้อสีเขียวสดใส", pos: "(N.)", example: "Kiwi is great in fruit salad." },
+            { word: "GRAPE", category: "ผลไม้", thai: "องุ่น", descriptiveHint: "ผลไม้ลูกเล็กๆ เป็นพวง ใช้ทำไวน์", pos: "(N.)", example: "I bought a bunch of sweet green grapes." },
+            { word: "MANGO", category: "ผลไม้", thai: "มะม่วง", descriptiveHint: "ผลไม้เขตร้อน หวานฉ่ำ สีเหลือง", pos: "(N.)", example: "Ripe mango is very sweet." },
+            { word: "APPLE", category: "ผลไม้", thai: "แอปเปิล", descriptiveHint: "ผลไม้กลม สีแดง/เขียว ยอดนิยม", pos: "(N.)", example: "An apple a day." },
+            { word: "PEACH", category: "ผลไม้", thai: "ลูกพีช", descriptiveHint: "ผลไม้มีขนอ่อน สีชมพูอมส้ม", pos: "(N.)", example: "Sweet juicy peach." },
+            { word: "ORANGE", category: "ผลไม้", thai: "ส้ม", descriptiveHint: "ผลไม้รสเปรี้ยวอมหวาน วิตามินซีสูง", pos: "(N.)", example: "Fresh orange juice." },
+            { word: "BANANA", category: "ผลไม้", thai: "กล้วย", descriptiveHint: "ผลไม้ยาว สีเหลือง ลิงชอบกิน", pos: "(N.)", example: "Monkeys love bananas." },
+            { word: "CHERRY", category: "ผลไม้", thai: "เชอร์รี่", descriptiveHint: "ผลไม้ลูกเล็กสีแดง บนเค้ก", pos: "(N.)", example: "Cherry on top." },
             
-            { word: "BUS", category: "การเดินทาง", descriptiveHint: "รถโดยสารขนาดใหญ่", pos: "(N.)", example: "Take the bus to work." },
-            { word: "MAP", category: "การเดินทาง", descriptiveHint: "แผนที่บอกทาง", pos: "(N.)", example: "Look at the map." },
-            { word: "TRIP", category: "การเดินทาง", descriptiveHint: "การเดินทางท่องเที่ยวสั้นๆ", pos: "(N.)", example: "A weekend trip." },
-            { word: "BOAT", category: "การเดินทาง", descriptiveHint: "ยานพาหนะทางน้ำ", pos: "(N.)", example: "Fishing on a boat." },
-            { word: "HOTEL", category: "การเดินทาง", descriptiveHint: "ที่พักค้างคืนสำหรับนักเดินทาง", pos: "(N.)", example: "Stay in a 5-star hotel." },
-            
-            { word: "IDEA", category: "นามธรรม", descriptiveHint: "ความคิดหรือแผนการ", pos: "(N.)", example: "A brilliant idea." },
-            { word: "HOPE", category: "นามธรรม", descriptiveHint: "ความหวัง", pos: "(N.)", example: "Never lose hope." },
-            { word: "LOGIC", category: "นามธรรม", descriptiveHint: "ตรรกะ เหตุผล", pos: "(N.)", example: "Use logic to solve it." },
-            
-            { word: "CAT", category: "สัตว์", descriptiveHint: "สัตว์เลี้ยง ร้องเหมียว", pos: "(N.)", example: "The cat is sleeping." },
-            { word: "DOG", category: "สัตว์", descriptiveHint: "เพื่อนที่ดีที่สุดของมนุษย์", pos: "(N.)", example: "My dog barks loudly." },
-            { word: "TIGER", category: "สัตว์", descriptiveHint: "แมวใหญ่ ลายพาดกลอน", pos: "(N.)", example: "Bengal tiger." },
-            
-            { word: "RICE", category: "อาหาร", descriptiveHint: "อาหารหลักคนเอเชีย", pos: "(N.)", example: "Fried rice." },
-            { word: "PIZZA", category: "อาหาร", descriptiveHint: "แป้งแผ่นกลม หน้าชีสและซอส", pos: "(N.)", example: "Pepperoni pizza." },
-            
-            { word: "RAIN", category: "ธรรมชาติ", descriptiveHint: "น้ำที่ตกลงมาจากฟ้า", pos: "(N.)", example: "Singing in the rain." },
-            { word: "SUN", category: "ธรรมชาติ", descriptiveHint: "ดาวฤกษ์ที่ให้แสงสว่าง", pos: "(N.)", example: "The sun rises." },
-            
-            { word: "BOOK", category: "สุ่ม 20 คำ (Random Mix)", descriptiveHint: "สิ่งที่มีหน้ากระดาษให้อ่าน", pos: "(N.)", example: "Read a book." },
-            { word: "MUSIC", category: "สุ่ม 20 คำ (Random Mix)", descriptiveHint: "เสียงดนตรี ไพเราะ", pos: "(N.)", example: "Listen to music." },
-            { word: "HAPPY", category: "สุ่ม 20 คำ (Random Mix)", descriptiveHint: "มีความสุข (Adjective)", pos: "(Adj.)", example: "I am happy." },
-            { word: "WATER", category: "สุ่ม 20 คำ (Random Mix)", descriptiveHint: "ของเหลวใส จำเป็นต่อชีวิต", pos: "(N.)", example: "Drink water." }
+            // 2. TRAVEL
+            { word: "BUS", category: "การเดินทาง", thai: "รถบัส", descriptiveHint: "รถโดยสารขนาดใหญ่", pos: "(N.)", example: "Take the bus to work." },
+            { word: "MAP", category: "การเดินทาง", thai: "แผนที่", descriptiveHint: "แผนที่บอกทาง", pos: "(N.)", example: "Look at the map." },
+            { word: "TRIP", category: "การเดินทาง", thai: "การเที่ยว", descriptiveHint: "การเดินทางท่องเที่ยวสั้นๆ", pos: "(N.)", example: "A weekend trip." },
+            { word: "BOAT", category: "การเดินทาง", thai: "เรือ", descriptiveHint: "ยานพาหนะทางน้ำ", pos: "(N.)", example: "Fishing on a boat." },
+            { word: "HOTEL", category: "การเดินทาง", thai: "โรงแรม", descriptiveHint: "ที่พักค้างคืนสำหรับนักเดินทาง", pos: "(N.)", example: "Stay in a 5-star hotel." },
+            { word: "FLIGHT", category: "การเดินทาง", thai: "เที่ยวบิน", descriptiveHint: "การเดินทางโดยเครื่องบิน", pos: "(N.)", example: "The flight was delayed." },
+            { word: "TICKET", category: "การเดินทาง", thai: "ตั๋ว", descriptiveHint: "เอกสารสำหรับเข้าชมหรือเดินทาง", pos: "(N.)", example: "Buy a train ticket." },
+            { word: "VOYAGE", category: "การเดินทาง", thai: "การเดินเรือ", descriptiveHint: "การเดินทางไกลทางน้ำ", pos: "(N.)", example: "A long sea voyage." },
+            { word: "PASSPORT", category: "การเดินทาง", thai: "พาสปอร์ต", descriptiveHint: "หนังสือเดินทาง", pos: "(N.)", example: "Check your passport." },
+            { word: "AIRPLANE", category: "การเดินทาง", thai: "เครื่องบิน", descriptiveHint: "ยานพาหนะที่มีปีก", pos: "(N.)", example: "The airplane took off." },
+
+            // 3. ABSTRACT
+            { word: "IDEA", category: "นามธรรม", thai: "ความคิด", descriptiveHint: "ความคิดหรือแผนการ", pos: "(N.)", example: "A brilliant idea." },
+            { word: "HOPE", category: "นามธรรม", thai: "ความหวัง", descriptiveHint: "ความปรารถนาสิ่งดีๆ", pos: "(N.)", example: "Never lose hope." },
+            { word: "FATE", category: "นามธรรม", thai: "โชคชะตา", descriptiveHint: "สิ่งที่ถูกกำหนดไว้แล้ว", pos: "(N.)", example: "It was his fate." },
+            { word: "GHOST", category: "นามธรรม", thai: "ผี", descriptiveHint: "วิญญาณ", pos: "(N.)", example: "Afraid of ghosts." },
+            { word: "LOGIC", category: "นามธรรม", thai: "ตรรกะ", descriptiveHint: "เหตุผล", pos: "(N.)", example: "Use logic to solve it." },
+            { word: "RHYTHM", category: "นามธรรม", thai: "จังหวะ", descriptiveHint: "จังหวะดนตรี", pos: "(N.)", example: "Feel the rhythm." },
+            { word: "HONESTY", category: "นามธรรม", thai: "ความซื่อสัตย์", descriptiveHint: "การพูดความจริง", pos: "(N.)", example: "Honesty is key." },
+            { word: "COURAGE", category: "นามธรรม", thai: "ความกล้า", descriptiveHint: "ความกล้าหาญ", pos: "(N.)", example: "Show some courage." },
+            { word: "PASSION", category: "นามธรรม", thai: "ความหลงใหล", descriptiveHint: "ความชอบอย่างรุนแรง", pos: "(N.)", example: "Passion for art." },
+            { word: "KNOWLEDGE", category: "นามธรรม", thai: "ความรู้", descriptiveHint: "สิ่งที่เรียนรู้มา", pos: "(N.)", example: "Knowledge is power." },
+
+            // 4. ANIMALS
+            { word: "ANT", category: "สัตว์", thai: "มด", descriptiveHint: "แมลงตัวเล็ก ขยัน", pos: "(N.)", example: "Ants work hard." },
+            { word: "CUB", category: "สัตว์", thai: "ลูกสัตว์", descriptiveHint: "ลูกสิงโตหรือหมี", pos: "(N.)", example: "A lion cub." },
+            { word: "CAT", category: "สัตว์", thai: "แมว", descriptiveHint: "สัตว์เลี้ยง ร้องเหมียว", pos: "(N.)", example: "The cat is sleeping." },
+            { word: "DOG", category: "สัตว์", thai: "สุนัข", descriptiveHint: "เพื่อนที่ดีที่สุดของมนุษย์", pos: "(N.)", example: "My dog barks loudly." },
+            { word: "WOLF", category: "สัตว์", thai: "หมาป่า", descriptiveHint: "สุนัขป่า หอนตอนกลางคืน", pos: "(N.)", example: "A wolf howling." },
+            { word: "TIGER", category: "สัตว์", thai: "เสือ", descriptiveHint: "แมวใหญ่ ลายพาดกลอน", pos: "(N.)", example: "Bengal tiger." },
+            { word: "EAGLE", category: "สัตว์", thai: "อินทรี", descriptiveHint: "นกล่าเหยื่อ บินสูง", pos: "(N.)", example: "Eagle eye." },
+            { word: "ZEBRA", category: "สัตว์", thai: "ม้าลาย", descriptiveHint: "ม้าลายขาวดำ", pos: "(N.)", example: "Stripes of a zebra." },
+            { word: "SNAKE", category: "สัตว์", thai: "งู", descriptiveHint: "สัตว์เลื้อยคลาน ไม่มีขา", pos: "(N.)", example: "A long snake." },
+            { word: "ELEPHANT", category: "สัตว์", thai: "ช้าง", descriptiveHint: "สัตว์บกใหญ่ที่สุด มีงวง", pos: "(N.)", example: "Big elephant." },
+
+            // 5. FOOD
+            { word: "PIE", category: "อาหาร", thai: "พาย", descriptiveHint: "ขนมอบไส้ต่างๆ", pos: "(N.)", example: "Apple pie." },
+            { word: "EGG", category: "อาหาร", thai: "ไข่", descriptiveHint: "มาจากไก่ กินตอนเช้า", pos: "(N.)", example: "Boiled egg." },
+            { word: "SOUP", category: "อาหาร", thai: "ซุป", descriptiveHint: "อาหารเหลว", pos: "(N.)", example: "Hot chicken soup." },
+            { word: "RICE", category: "อาหาร", thai: "ข้าว", descriptiveHint: "อาหารหลักคนเอเชีย", pos: "(N.)", example: "Fried rice." },
+            { word: "PASTA", category: "อาหาร", thai: "พาสต้า", descriptiveHint: "เส้นอิตาเลียน", pos: "(N.)", example: "Tomato pasta." },
+            { word: "PIZZA", category: "อาหาร", thai: "พิซซ่า", descriptiveHint: "แป้งแผ่นกลม หน้าชีส", pos: "(N.)", example: "Pepperoni pizza." },
+            { word: "NOODLE", category: "อาหาร", thai: "ก๋วยเตี๋ยว", descriptiveHint: "เส้นยาวๆ ในน้ำซุป", pos: "(N.)", example: "Spicy noodle." },
+            { word: "SALAD", category: "อาหาร", thai: "สลัด", descriptiveHint: "ผักสดคลุกเคล้า", pos: "(N.)", example: "Green salad." },
+            { word: "WAFFLE", category: "อาหาร", thai: "วาฟเฟิล", descriptiveHint: "ขนมลายตาราง", pos: "(N.)", example: "Waffle with syrup." },
+            { word: "BROCCOLI", category: "อาหาร", thai: "บรอกโคลี", descriptiveHint: "ผักสีเขียว รูปร่างเหมือนต้นไม้", pos: "(N.)", example: "Eat your broccoli." },
+
+            // 6. NATURE
+            { word: "SUN", category: "ธรรมชาติ", thai: "พระอาทิตย์", descriptiveHint: "ดาวฤกษ์ให้แสงสว่าง", pos: "(N.)", example: "The sun rises." },
+            { word: "RAIN", category: "ธรรมชาติ", thai: "ฝน", descriptiveHint: "น้ำจากฟ้า", pos: "(N.)", example: "Singing in the rain." },
+            { word: "FOG", category: "ธรรมชาติ", thai: "หมอก", descriptiveHint: "เมฆระดับต่ำ มองไม่ชัด", pos: "(N.)", example: "Thick fog." },
+            { word: "WIND", category: "ธรรมชาติ", thai: "ลม", descriptiveHint: "อากาศเคลื่อนที่", pos: "(N.)", example: "Strong wind." },
+            { word: "RIVER", category: "ธรรมชาติ", thai: "แม่น้ำ", descriptiveHint: "ทางน้ำไหลลงทะเล", pos: "(N.)", example: "Cross the river." },
+            { word: "OCEAN", category: "ธรรมชาติ", thai: "มหาสมุทร", descriptiveHint: "ทะเลกว้างใหญ่", pos: "(N.)", example: "Deep blue ocean." },
+            { word: "FOREST", category: "ธรรมชาติ", thai: "ป่า", descriptiveHint: "พื้นที่ต้นไม้เยอะๆ", pos: "(N.)", example: "Walk in the forest." },
+            { word: "MOUNTAIN", category: "ธรรมชาติ", thai: "ภูเขา", descriptiveHint: "ที่สูง ยอดแหลม", pos: "(N.)", example: "Climb the mountain." },
+            { word: "LIGHTNING", category: "ธรรมชาติ", thai: "ฟ้าผ่า", descriptiveHint: "แสงวาบตอนพายุ", pos: "(N.)", example: "Thunder and lightning." },
+            { word: "VOLCANO", category: "ธรรมชาติ", thai: "ภูเขาไฟ", descriptiveHint: "ภูเขาพ่นลาวา", pos: "(N.)", example: "Active volcano." },
+
+            // 7. HOME
+            { word: "BED", category: "บ้าน", thai: "เตียง", descriptiveHint: "เฟอร์นิเจอร์ไว้นอน", pos: "(N.)", example: "Go to bed." },
+            { word: "DOOR", category: "บ้าน", thai: "ประตู", descriptiveHint: "ทางเข้าออก", pos: "(N.)", example: "Open the door." },
+            { word: "DESK", category: "บ้าน", thai: "โต๊ะทำงาน", descriptiveHint: "โต๊ะเขียนหนังสือ", pos: "(N.)", example: "Work at the desk." },
+            { word: "CHAIR", category: "บ้าน", thai: "เก้าอี้", descriptiveHint: "ไว้นั่ง", pos: "(N.)", example: "Sit on the chair." },
+            { word: "SOFA", category: "บ้าน", thai: "โซฟา", descriptiveHint: "เก้าอี้นวมยาว", pos: "(N.)", example: "Relax on the sofa." },
+            { word: "TABLE", category: "บ้าน", thai: "โต๊ะ", descriptiveHint: "วางของ มีขา", pos: "(N.)", example: "Dinner table." },
+            { word: "WINDOW", category: "บ้าน", thai: "หน้าต่าง", descriptiveHint: "ช่องกระจกที่ผนัง", pos: "(N.)", example: "Clean the window." },
+            { word: "KITCHEN", category: "บ้าน", thai: "ห้องครัว", descriptiveHint: "ห้องทำอาหาร", pos: "(N.)", example: "Cooking in the kitchen." },
+            { word: "BALCONY", category: "บ้าน", thai: "ระเบียง", descriptiveHint: "พื้นที่ยื่นออกนอกบ้าน", pos: "(N.)", example: "View from the balcony." },
+            { word: "TELEVISION", category: "บ้าน", thai: "ทีวี", descriptiveHint: "จอภาพดูรายการ", pos: "(N.)", example: "Watch television." },
+
+            // 8. BODY
+            { word: "EAR", category: "ร่างกาย", thai: "หู", descriptiveHint: "อวัยวะได้ยิน", pos: "(N.)", example: "Listen with your ear." },
+            { word: "EYE", category: "ร่างกาย", thai: "ตา", descriptiveHint: "อวัยวะมองเห็น", pos: "(N.)", example: "Blue eyes." },
+            { word: "NOSE", category: "ร่างกาย", thai: "จมูก", descriptiveHint: "อวัยวะดมกลิ่น", pos: "(N.)", example: "Runny nose." },
+            { word: "HAND", category: "ร่างกาย", thai: "มือ", descriptiveHint: "อวัยวะจับของ", pos: "(N.)", example: "Hold my hand." },
+            { word: "HEART", category: "ร่างกาย", thai: "หัวใจ", descriptiveHint: "อวัยวะสูบฉีดเลือด", pos: "(N.)", example: "Beating heart." },
+            { word: "BRAIN", category: "ร่างกาย", thai: "สมอง", descriptiveHint: "อวัยวะความคิด", pos: "(N.)", example: "Use your brain." },
+            { word: "STOMACH", category: "ร่างกาย", thai: "ท้อง", descriptiveHint: "อวัยวะย่อยอาหาร", pos: "(N.)", example: "Full stomach." },
+            { word: "THUMB", category: "ร่างกาย", thai: "นิ้วโป้ง", descriptiveHint: "นิ้วใหญ่สุด", pos: "(N.)", example: "Thumbs up." },
+            { word: "LUNGS", category: "ร่างกาย", thai: "ปอด", descriptiveHint: "อวัยวะหายใจ", pos: "(N.)", example: "Fill your lungs." },
+            { word: "SHOULDER", category: "ร่างกาย", thai: "ไหล่", descriptiveHint: "ส่วนต่อแขน", pos: "(N.)", example: "Tap on the shoulder." },
+
+            // 9. JOBS
+            { word: "CHEF", category: "อาชีพ", thai: "พ่อครัว", descriptiveHint: "คนทำอาหาร", pos: "(N.)", example: "Head chef." },
+            { word: "JUDGE", category: "อาชีพ", thai: "ผู้พิพากษา", descriptiveHint: "ตัดสินคดี", pos: "(N.)", example: "The judge ruled." },
+            { word: "PILOT", category: "อาชีพ", thai: "นักบิน", descriptiveHint: "ขับเครื่องบิน", pos: "(N.)", example: "Airline pilot." },
+            { word: "NURSE", category: "อาชีพ", thai: "พยาบาล", descriptiveHint: "ดูแลคนป่วย", pos: "(N.)", example: "Hospital nurse." },
+            { word: "DOCTOR", category: "อาชีพ", thai: "หมอ", descriptiveHint: "รักษาคนไข้", pos: "(N.)", example: "See a doctor." },
+            { word: "ACTOR", category: "อาชีพ", thai: "นักแสดง", descriptiveHint: "แสดงหนัง", pos: "(N.)", example: "Famous actor." },
+            { word: "FARMER", category: "อาชีพ", thai: "ชาวนา", descriptiveHint: "ปลูกข้าว เลี้ยงสัตว์", pos: "(N.)", example: "A rice farmer." },
+            { word: "TEACHER", category: "อาชีพ", thai: "ครู", descriptiveHint: "สอนนักเรียน", pos: "(N.)", example: "Math teacher." },
+            { word: "ENGINEER", category: "อาชีพ", thai: "วิศวกร", descriptiveHint: "ออกแบบโครงสร้าง", pos: "(N.)", example: "Civil engineer." },
+            { word: "ARCHITECT", category: "อาชีพ", thai: "สถาปนิก", descriptiveHint: "ออกแบบตึก", pos: "(N.)", example: "Building architect." },
+
+            // 10. ADJECTIVES
+            { word: "BIG", category: "คำคุณศัพท์", thai: "ใหญ่", descriptiveHint: "ขนาดมหึมา", pos: "(Adj.)", example: "A big house." },
+            { word: "WET", category: "คำคุณศัพท์", thai: "เปียก", descriptiveHint: "โดนน้ำ", pos: "(Adj.)", example: "Wet clothes." },
+            { word: "SLOW", category: "คำคุณศัพท์", thai: "ช้า", descriptiveHint: "ไม่เร็ว", pos: "(Adj.)", example: "Slow turtle." },
+            { word: "QUIET", category: "คำคุณศัพท์", thai: "เงียบ", descriptiveHint: "ไม่มีเสียง", pos: "(Adj.)", example: "Be quiet." },
+            { word: "HAPPY", category: "คำคุณศัพท์", thai: "มีความสุข", descriptiveHint: "ยิ้มแย้ม", pos: "(Adj.)", example: "Happy birthday." },
+            { word: "ROUGH", category: "คำคุณศัพท์", thai: "ขรุขระ", descriptiveHint: "พื้นผิวไม่เรียบ", pos: "(Adj.)", example: "Rough road." },
+            { word: "CLEVER", category: "คำคุณศัพท์", thai: "ฉลาด", descriptiveHint: "หัวไว", pos: "(Adj.)", example: "Clever boy." },
+            { word: "BEAUTIFUL", category: "คำคุณศัพท์", thai: "สวยงาม", descriptiveHint: "น่ามอง", pos: "(Adj.)", example: "Beautiful view." },
+            { word: "FANTASTIC", category: "คำคุณศัพท์", thai: "ยอดเยี่ยม", descriptiveHint: "มหัศจรรย์", pos: "(Adj.)", example: "Fantastic job." },
+            { word: "DELICIOUS", category: "คำคุณศัพท์", thai: "อร่อย", descriptiveHint: "รสชาติดี", pos: "(Adj.)", example: "Delicious food." },
+
+            // 11. SPORTS (NEW)
+            { word: "FOOTBALL", category: "กีฬา", thai: "ฟุตบอล", descriptiveHint: "กีฬาเตะลูกบอลกลม", pos: "(N.)", example: "Play football." },
+            { word: "TENNIS", category: "กีฬา", thai: "เทนนิส", descriptiveHint: "ใช้ไม้แร็กเก็ตตีลูกสักหลาด", pos: "(N.)", example: "Watch tennis." },
+            { word: "GOLF", category: "กีฬา", thai: "กอล์ฟ", descriptiveHint: "ตีลูกลงหลุม", pos: "(N.)", example: "Golf course." },
+            { word: "BOXING", category: "กีฬา", thai: "มวย", descriptiveHint: "กีฬาชกมวย", pos: "(N.)", example: "Heavyweight boxing." },
+            { word: "RUGBY", category: "กีฬา", thai: "รักบี้", descriptiveHint: "ลูกบอลรูปไข่", pos: "(N.)", example: "Rugby match." },
+            { word: "HOCKEY", category: "กีฬา", thai: "ฮอกกี้", descriptiveHint: "ใช้ไม้ตีลูกบนน้ำแข็ง/หญ้า", pos: "(N.)", example: "Ice hockey." },
+            { word: "JUDO", category: "กีฬา", thai: "ยูโด", descriptiveHint: "ศิลปะการต่อสู้ญี่ปุ่น", pos: "(N.)", example: "Judo belt." },
+            { word: "KARATE", category: "กีฬา", thai: "คาราเต้", descriptiveHint: "ศิลปะการต่อสู้ใช้มือเปล่า", pos: "(N.)", example: "Karate chop." },
+            { word: "SWIMMING", category: "กีฬา", thai: "ว่ายน้ำ", descriptiveHint: "เคลื่อนที่ในน้ำ", pos: "(N.)", example: "Go swimming." },
+            { word: "SKIING", category: "กีฬา", thai: "สกี", descriptiveHint: "ไถลบนหิมะ", pos: "(N.)", example: "Skiing resort." },
+
+            // 12. CLOTHES (NEW)
+            { word: "SHIRT", category: "เสื้อผ้า", thai: "เสื้อเชิ้ต", descriptiveHint: "เสื้อมีปก กระดุมหน้า", pos: "(N.)", example: "White shirt." },
+            { word: "SKIRT", category: "เสื้อผ้า", thai: "กระโปรง", descriptiveHint: "เครื่องแต่งกายหญิงท่อนล่าง", pos: "(N.)", example: "Short skirt." },
+            { word: "DRESS", category: "เสื้อผ้า", thai: "ชุดเดรส", descriptiveHint: "ชุดกระโปรงยาวติดกัน", pos: "(N.)", example: "Evening dress." },
+            { word: "SHOES", category: "เสื้อผ้า", thai: "รองเท้า", descriptiveHint: "สวมใส่ที่เท้า", pos: "(N.)", example: "Running shoes." },
+            { word: "HAT", category: "เสื้อผ้า", thai: "หมวก", descriptiveHint: "สวมศีรษะกันแดด", pos: "(N.)", example: "Wear a hat." },
+            { word: "SOCKS", category: "เสื้อผ้า", thai: "ถุงเท้า", descriptiveHint: "สวมเท้าก่อนใส่รองเท้า", pos: "(N.)", example: "Cotton socks." },
+            { word: "COAT", category: "เสื้อผ้า", thai: "เสื้อคลุม", descriptiveHint: "เสื้อตัวนอกกันหนาว", pos: "(N.)", example: "Winter coat." },
+            { word: "JEANS", category: "เสื้อผ้า", thai: "กางเกงยีนส์", descriptiveHint: "กางเกงผ้าเดนิม", pos: "(N.)", example: "Blue jeans." },
+            { word: "SCARF", category: "เสื้อผ้า", thai: "ผ้าพันคอ", descriptiveHint: "พันรอบคอกันหนาว", pos: "(N.)", example: "Wool scarf." },
+            { word: "BELT", category: "เสื้อผ้า", thai: "เข็มขัด", descriptiveHint: "รัดเอว", pos: "(N.)", example: "Leather belt." },
+
+            // 13. COLORS (NEW)
+            { word: "RED", category: "สี", thai: "สีแดง", descriptiveHint: "สีของเลือด", pos: "(Adj.)", example: "Red rose." },
+            { word: "BLUE", category: "สี", thai: "สีน้ำเงิน", descriptiveHint: "สีของท้องฟ้า", pos: "(Adj.)", example: "Blue sky." },
+            { word: "GREEN", category: "สี", thai: "สีเขียว", descriptiveHint: "สีของใบไม้", pos: "(Adj.)", example: "Green grass." },
+            { word: "YELLOW", category: "สี", thai: "สีเหลือง", descriptiveHint: "สีของดวงอาทิตย์", pos: "(Adj.)", example: "Yellow lemon." },
+            { word: "BLACK", category: "สี", thai: "สีดำ", descriptiveHint: "สีของความมืด", pos: "(Adj.)", example: "Black cat." },
+            { word: "WHITE", category: "สี", thai: "สีขาว", descriptiveHint: "สีของหิมะ", pos: "(Adj.)", example: "White paper." },
+            { word: "PINK", category: "สี", thai: "สีชมพู", descriptiveHint: "สีหวานแหวว", pos: "(Adj.)", example: "Pink flower." },
+            { word: "PURPLE", category: "สี", thai: "สีม่วง", descriptiveHint: "สีผสมแดงกับน้ำเงิน", pos: "(Adj.)", example: "Purple grape." },
+            { word: "BROWN", category: "สี", thai: "สีน้ำตาล", descriptiveHint: "สีของดิน/ไม้", pos: "(Adj.)", example: "Brown bear." },
+            { word: "ORANGE", category: "สี", thai: "สีส้ม", descriptiveHint: "สีของผลส้ม", pos: "(Adj.)", example: "Orange juice." },
+
+            // 14. RANDOM MIX (20 Words)
+            { word: "BOOK", category: "สุ่ม 20 คำ (Random Mix)", thai: "หนังสือ", descriptiveHint: "สิ่งที่มีหน้ากระดาษให้อ่าน", pos: "(N.)", example: "Read a book." },
+            { word: "FISH", category: "สุ่ม 20 คำ (Random Mix)", thai: "ปลา", descriptiveHint: "สัตว์น้ำ หายใจด้วยเหงือก", pos: "(N.)", example: "Swim like a fish." },
+            { word: "MUSIC", category: "สุ่ม 20 คำ (Random Mix)", thai: "ดนตรี", descriptiveHint: "เสียงที่จัดเรียงไพเราะ", pos: "(N.)", example: "Listen to music." },
+            { word: "GLASS", category: "สุ่ม 20 คำ (Random Mix)", thai: "แก้ว", descriptiveHint: "วัสดุใส แตกง่าย", pos: "(N.)", example: "Glass of water." },
+            { word: "CLOUD", category: "สุ่ม 20 คำ (Random Mix)", thai: "เมฆ", descriptiveHint: "ไอน้ำบนท้องฟ้า", pos: "(N.)", example: "White cloud." },
+            { word: "SHIRT", category: "สุ่ม 20 คำ (Random Mix)", thai: "เสื้อเชิ้ต", descriptiveHint: "เสื้อมีปก", pos: "(N.)", example: "Clean shirt." },
+            { word: "PENCIL", category: "สุ่ม 20 คำ (Random Mix)", thai: "ดินสอ", descriptiveHint: "เครื่องเขียนไส้ดำ", pos: "(N.)", example: "Sharpen the pencil." },
+            { word: "CAMERA", category: "สุ่ม 20 คำ (Random Mix)", thai: "กล้อง", descriptiveHint: "อุปกรณ์ถ่ายภาพ", pos: "(N.)", example: "Digital camera." },
+            { word: "JOURNEY", category: "สุ่ม 20 คำ (Random Mix)", thai: "การเดินทาง", descriptiveHint: "การเดินทางไกล", pos: "(N.)", example: "Long journey." },
+            { word: "FRIEND", category: "สุ่ม 20 คำ (Random Mix)", thai: "เพื่อน", descriptiveHint: "คนรู้จักที่สนิท", pos: "(N.)", example: "Best friend." },
+            { word: "SILENCE", category: "สุ่ม 20 คำ (Random Mix)", thai: "ความเงียบ", descriptiveHint: "ไม่มีเสียง", pos: "(N.)", example: "Silence is golden." },
+            { word: "PROBLEM", category: "สุ่ม 20 คำ (Random Mix)", thai: "ปัญหา", descriptiveHint: "เรื่องยุ่งยาก", pos: "(N.)", example: "Solve the problem." },
+            { word: "FUTURE", category: "สุ่ม 20 คำ (Random Mix)", thai: "อนาคต", descriptiveHint: "เวลาที่ยังมาไม่ถึง", pos: "(N.)", example: "Bright future." },
+            { word: "HISTORY", category: "สุ่ม 20 คำ (Random Mix)", thai: "ประวัติศาสตร์", descriptiveHint: "เรื่องราวในอดีต", pos: "(N.)", example: "Study history." },
+            { word: "DIAMOND", category: "สุ่ม 20 คำ (Random Mix)", thai: "เพชร", descriptiveHint: "อัญมณีแข็งที่สุด", pos: "(N.)", example: "Diamond ring." },
+            { word: "VACATION", category: "สุ่ม 20 คำ (Random Mix)", thai: "วันหยุด", descriptiveHint: "ช่วงเวลาพักผ่อน", pos: "(N.)", example: "Summer vacation." },
+            { word: "CHAMPION", category: "สุ่ม 20 คำ (Random Mix)", thai: "แชมป์", descriptiveHint: "ผู้ชนะเลิศ", pos: "(N.)", example: "World champion." },
+            { word: "ELECTRIC", category: "สุ่ม 20 คำ (Random Mix)", thai: "ไฟฟ้า", descriptiveHint: "เกี่ยวกับไฟ", pos: "(Adj.)", example: "Electric car." },
+            { word: "BUILDING", category: "สุ่ม 20 คำ (Random Mix)", thai: "ตึก", descriptiveHint: "สิ่งก่อสร้างสูง", pos: "(N.)", example: "Tall building." },
+            { word: "COMPUTER", category: "สุ่ม 20 คำ (Random Mix)", thai: "คอมพิวเตอร์", descriptiveHint: "เครื่องประมวลผล", pos: "(N.)", example: "Use a computer." }
         ];
 
         // --- VARS ---
@@ -530,7 +657,12 @@
         function speakText(text, lang) {
             if (!('speechSynthesis' in window)) return null;
             window.speechSynthesis.cancel();
-            const utterance = new SpeechSynthesisUtterance(text);
+            
+            // Fix: Convert text to Lowercase to force word reading instead of spelling
+            // (Most TTS engines read ALL CAPS as letters, lowercase as words)
+            const textToSpeak = text.toLowerCase();
+            
+            const utterance = new SpeechSynthesisUtterance(textToSpeak);
             utterance.lang = lang;
             utterance.rate = 0.8;
             window.speechSynthesis.speak(utterance);
@@ -604,17 +736,16 @@
         function generateKeyboard() {
             const keyboard = document.getElementById('keyboard');
             keyboard.innerHTML = '';
-            // Auto Mode now shows keyboard
+            // Auto mode now shows keyboard
 
             for (let i = 65; i <= 90; i++) {
                 const char = String.fromCharCode(i);
                 const btn = document.createElement('button');
                 btn.textContent = char;
                 btn.className = 'key-btn';
-                btn.setAttribute('data-char', char); // Helper for finding button
+                btn.setAttribute('data-char', char); 
                 btn.onclick = () => handleManualGuess(char, btn);
                 
-                // Restore state if revisiting word
                 if (guessedLetters.has(char)) {
                     btn.disabled = true;
                     btn.classList.add(currentWord.includes(char) ? 'correct' : 'wrong');
@@ -625,7 +756,7 @@
 
         // --- MANUAL PLAY ---
         function handleManualGuess(char, btn) {
-            if (isAutoSolving || (isAutoModeActive && isAutoSolving)) return;
+            if (isAutoSolving || isAutoModeActive) return;
             
             btn.disabled = true;
             guessedLetters.add(char);
@@ -646,7 +777,6 @@
                 drawHangman(lives);
                 document.getElementById('lives-left').innerText = `โอกาส: ${lives}`;
                 
-                // Shake Effect
                 const container = document.querySelector('.container');
                 container.classList.add('shake');
                 setTimeout(() => container.classList.remove('shake'), 500);
@@ -660,6 +790,7 @@
 
         function disableControls() {
             document.querySelectorAll('.key-btn').forEach(b => b.disabled = true);
+            // In manual mode we disable hint/giveup on end
             if(!isAutoModeActive) {
                 document.getElementById('show-hint-btn').disabled = true;
                 document.getElementById('give-up-btn').disabled = true;
@@ -670,19 +801,18 @@
         function startAutoSolve() {
             if (!isAutoModeActive) return;
             
-            // Wait 1s before showing hint
+            // Generate queue of unique correct letters
+            const letters = [...new Set(currentWord.split(''))].filter(c => c >= 'A' && c <= 'Z');
+            lettersToRevealQueue = letters;
+            shuffle(lettersToRevealQueue);
+            
+            // Auto Trigger Hint
             setTimeout(() => {
                 document.getElementById('show-hint-btn').click();
-                
-                // Wait another 1s before guessing (Total 2s)
-                setTimeout(() => {
-                    const letters = [...new Set(currentWord.split(''))].filter(c => c >= 'A' && c <= 'Z');
-                    lettersToRevealQueue = letters;
-                    shuffle(lettersToRevealQueue);
-                    isAutoSolving = true;
-                    autoSolveLoop();
-                }, 1000);
-            }, 1000);
+            }, 300);
+
+            isAutoSolving = true;
+            autoSolveLoop();
         }
 
         function autoSolveLoop() {
@@ -748,20 +878,18 @@
         }
 
         function loadWord() {
-            if (currentWordIndex >= wordQueue.length) {
-                // Show Summary Screen instead of returning home immediately
-                showSummaryScreen();
-                return;
-            }
+            if (currentWordIndex >= wordQueue.length) return showSummary(); // Go to Summary
 
             currentWordDetails = wordQueue[currentWordIndex];
             currentWord = currentWordDetails.word.toUpperCase();
             
+            // Reset State
             lives = MAX_LIVES;
             guessedLetters.clear();
             hintUsed = false;
             stopAutoSolve();
             
+            // UI Reset
             drawHangman(lives);
             updateWordDisplay();
             generateKeyboard();
@@ -770,6 +898,7 @@
             document.getElementById('lives-left').innerText = `โอกาส: ${lives}`;
             document.getElementById('score').innerText = `คะแนน: ${totalScore}/${wordQueue.length}`;
             
+            // Hint Reset
             const hintDisplay = document.getElementById('hint-meaning-display');
             const hintBtn = document.getElementById('show-hint-btn');
             hintDisplay.style.display = 'none';
@@ -779,49 +908,86 @@
             
             document.getElementById('hint-example').innerText = currentWordDetails.example.replace(new RegExp(currentWordDetails.word, 'gi'), '___');
             
+            // Buttons
             document.getElementById('give-up-btn').style.display = 'block';
             document.getElementById('give-up-btn').disabled = false;
 
-            if (isAutoModeActive) startAutoSolve();
+            if (isAutoModeActive) {
+                // Auto Mode Sequence: 1s Wait -> Click Hint -> 1s Wait -> Start Solve
+                setTimeout(() => {
+                    const hBtn = document.getElementById('show-hint-btn');
+                    if(hBtn && !hBtn.disabled) hBtn.click();
+                    
+                    setTimeout(() => {
+                        startAutoSolve();
+                    }, 1000);
+                }, 1000);
+            }
         }
 
         function endGame(isWin) {
             stopAutoSolve();
             const hasNext = currentWordIndex + 1 < wordQueue.length;
             
+            // Populate End Screen (Updated with Thai Translation)
             document.getElementById('end-message').innerText = isWin ? "ยอดเยี่ยม! ถูกต้อง" : "เสียใจด้วย! คำตอบคือ";
             document.getElementById('end-message').style.color = isWin ? 'var(--color-correct)' : 'var(--color-wrong)';
             document.getElementById('end-details').innerText = `คำที่ ${currentWordIndex + 1}/${wordQueue.length}`;
-            document.getElementById('final-word-reveal').innerText = currentWord;
+            
+            // Show Word / Thai Meaning
+            document.getElementById('final-word-reveal').innerText = `${currentWord} / ${currentWordDetails.thai}`;
+            
             document.getElementById('final-meaning-reveal').innerText = `${currentWordDetails.descriptiveHint} ${currentWordDetails.example}`;
             
-            // Button Logic - Always enabled in Auto Mode
+            // Buttons logic
             const restartBtn = document.getElementById('restart-btn');
+            const backHomeBtn = document.getElementById('back-home-btn');
+            
             restartBtn.innerText = hasNext ? "ข้อต่อไป" : "ดูสรุปผล";
-            restartBtn.onclick = hasNext ? nextWord : showSummaryScreen;
-            restartBtn.disabled = false; // Always active
-
-            const homeBtn = document.getElementById('back-home-btn');
-            homeBtn.onclick = finishSession;
-            homeBtn.disabled = false; // Always active
+            restartBtn.onclick = hasNext ? nextWord : showSummary;
+            backHomeBtn.onclick = finishSession;
+            
+            // ENABLE BUTTONS ALWAYS 
+            restartBtn.disabled = false;
+            backHomeBtn.disabled = false;
             
             switchScreen('end-screen');
 
+            // **LOGIC: Read Word & Auto Advance**
             setTimeout(() => {
                 speakText(currentWord, 'en-US');
             }, 50);
 
-            // Auto Advance
+            // If Auto Mode AND Not Last Word, wait 4.5s then next
             if (isAutoModeActive && hasNext && isWin) {
                 autoAdvanceTimeout = setTimeout(() => {
                     nextWord();
                 }, 4500); 
-            } else if (isAutoModeActive && !hasNext) {
-                // If auto mode and finished, wait then show summary
+            } else if (isAutoModeActive && !hasNext && isWin) {
+                // Last word finished in Auto Mode -> Go to summary after delay
                 autoAdvanceTimeout = setTimeout(() => {
-                    showSummaryScreen();
+                    showSummary();
                 }, 4500);
             }
+        }
+
+        function showSummary() {
+            clearTimeout(autoAdvanceTimeout);
+            const list = document.getElementById('summary-list');
+            list.innerHTML = '';
+            
+            wordQueue.forEach((w, i) => {
+                const item = document.createElement('div');
+                item.className = 'summary-item';
+                item.innerHTML = `
+                    <div class="summary-word">${i+1}. ${w.word} <span style="font-size:0.8em; color:#a0aec0;">${w.pos}</span></div>
+                    <div class="summary-word" style="font-size: 1rem; color: #fff;">${w.thai}</div>
+                    <div class="summary-mean">${w.descriptiveHint}</div>
+                `;
+                list.appendChild(item);
+            });
+            
+            switchScreen('summary-screen');
         }
 
         function nextWord() {
@@ -831,31 +997,11 @@
             loadWord();
         }
 
-        function showSummaryScreen() {
-            clearTimeout(autoAdvanceTimeout);
-            stopAutoSolve();
-            
-            const listContainer = document.getElementById('summary-list');
-            listContainer.innerHTML = '';
-            document.getElementById('summary-score').innerText = `คะแนนรวม: ${totalScore} / ${wordQueue.length}`;
-
-            wordQueue.forEach(item => {
-                const div = document.createElement('div');
-                div.className = 'summary-item';
-                // Note: In a real app we'd track pass/fail per word for color, defaulting to green here
-                div.innerHTML = `<div class="summary-word">${item.word}</div><div class="summary-mean">${item.descriptiveHint}</div>`;
-                listContainer.appendChild(div);
-            });
-
-            document.getElementById('summary-home-btn').onclick = finishSession;
-            switchScreen('summary-screen');
-        }
-
         function finishSession() {
             clearTimeout(autoAdvanceTimeout);
             stopAutoSolve();
             switchScreen('start-screen');
-            isAutoModeActive = false; 
+            isAutoModeActive = false; // Reset secret mode on exit
             document.getElementById('game-title').classList.remove('robot-active');
         }
 
@@ -906,7 +1052,7 @@
                     title.classList.remove('robot-active');
                     alert("👤 Manual Mode");
                     stopAutoSolve();
-                    if (document.getElementById('game-screen').classList.contains('active')) loadWord(); 
+                    if (document.getElementById('game-screen').classList.contains('active')) loadWord();
                 }
             };
 
@@ -920,6 +1066,8 @@
             document.getElementById('give-up-btn').onclick = () => {
                 if(confirm("ยอมแพ้?")) finishSession();
             };
+            
+            document.getElementById('summary-home-btn').onclick = finishSession;
         });
     </script>
 </body>
