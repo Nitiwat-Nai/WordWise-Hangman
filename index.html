@@ -27,7 +27,7 @@
         /* Responsive Container */
         body {
             font-family: 'Sarabun', sans-serif;
-            background-color: var(--color-bg);
+            background-color: #263340; /* Slightly lighter BG for better contrast */
             color: var(--color-text-dark);
             margin: 0;
             padding: 0;
@@ -40,10 +40,11 @@
 
         .container {
             width: 100%;
-            max-width: 500px;
+            max-width: 480px; /* Slimmer max-width for modern mobile feel */
             box-sizing: border-box;
             background-color: var(--color-card);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            /* ENHANCEMENT: Modern box shadow */
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4), 0 5px 15px rgba(0, 0, 0, 0.3);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -58,15 +59,18 @@
             padding: 1rem 1rem; 
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
             margin-bottom: 0.5rem; 
+            position: sticky; /* Keep header visible */
+            top: 0;
+            z-index: 10;
         }
         header h1 {
             font-size: 1.8rem;
             margin: 0;
-            /* เพิ่ม cursor: pointer เพื่อบอกเป็นนัยว่าคลิกได้ */
             cursor: pointer; 
             transition: color 0.2s;
+            user-select: none; /* ENHANCEMENT: Prevent text selection on double-click */
         }
-        /* Style when secret mode is active (FIX: Removed color change) */
+        /* Style when secret mode is active */
         header h1.robot-active {
             animation: pulse 1s infinite alternate;
         }
@@ -89,6 +93,9 @@
         }
         
         /* --- Start/End Screen --- */
+        .start-screen {
+            padding-top: 1rem;
+        }
         .start-screen h2 {
             font-size: 2rem;
             color: var(--color-primary);
@@ -103,7 +110,7 @@
             display: flex;
             flex-direction: column;
             gap: 12px;
-            width: 90%;
+            width: 95%; /* Slightly wider buttons */
             max-width: 400px;
             margin: 0 auto 0.5rem; 
             overflow-y: auto; 
@@ -133,7 +140,6 @@
         .main-btn.btn-random:active {
             box-shadow: 0 2px 0 #32A860;
         }
-        /* Disable styling when Auto Advance is waiting */
         .main-btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
@@ -158,11 +164,16 @@
             align-items: center;
             margin-bottom: 0.5rem; 
             padding: 0.5rem; 
+            flex-grow: 1; /* ENHANCEMENT: Let this area take max vertical space */
+            justify-content: center; /* Center content vertically within its expanded space */
         }
         
         #hangman-svg {
-            width: 180px; 
-            height: 180px; 
+            /* ENHANCEMENT: Use VW for responsiveness */
+            width: 35vw; 
+            max-width: 180px; 
+            height: 35vw;
+            max-height: 180px;
             margin-bottom: 0.5rem; 
             overflow: visible; 
             background-color: #223040; 
@@ -224,7 +235,7 @@
             border: 2px solid var(--color-hint-border);
             border-radius: 10px;
             padding: 0.8rem 1rem;
-            margin-bottom: 1rem; 
+            margin-bottom: 0.75rem; /* ENHANCEMENT: Slightly reduced margin */
             text-align: left;
             font-size: 0.95rem;
             color: var(--color-text-dark);
@@ -280,7 +291,7 @@
         #keyboard {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: 8px;
+            gap: 6px; /* ENHANCEMENT: Slightly reduced gap */
             padding: 0 0.5rem 0.5rem; 
         }
 
@@ -327,6 +338,7 @@
         /* --- End Game Screen --- */
         #end-screen {
             justify-content: center; 
+            padding-top: 2rem;
         }
         #end-screen h2 {
             font-size: 2.5rem;
@@ -747,7 +759,7 @@
             const gainNode = audioContext.createGain();
 
             oscillator.connect(gainNode);
-            gainNode.connect(audioContext.destination); // Fixed destination access
+            gainNode.connect(audioContext.destination); 
 
             oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
             oscillator.type = type; 
@@ -880,7 +892,7 @@
                     showHintBtn.disabled = true;
                     giveUpBtn.disabled = true;
                     
-                    // **FIX #2:** Delay 0.5s before going to End Screen
+                    // **FIX #2:** Show word on game screen for 0.5s before going to End Screen
                     setTimeout(() => {
                         endGame(true); 
                     }, 500); 
@@ -912,7 +924,7 @@
             scoreEl.textContent = `คะแนน: ${totalScore}/${wordQueue.length}`;
         }
         
-        // --- AUTO-SOLVE LOGIC (REVISED) ---
+        // --- AUTO-SOLVE LOGIC ---
         
         function stopAutoSolve() {
             if (autoSolveTimeoutId) {
@@ -939,7 +951,7 @@
             playPing(); 
             
             if (solved) {
-                // Word solved. Stop the loop, add score, and go to End Screen
+                // Word solved. Stop the loop, add score, and go to End Screen (Req #3)
                 stopAutoSolve(); 
                 totalScore++; // Update score
                 scoreEl.textContent = `คะแนน: ${totalScore}/${wordQueue.length}`; 
@@ -962,7 +974,6 @@
          */
         function autoSolveLoop() {
             if (lettersToRevealQueue.length === 0 || !isAutoSolving) {
-                // Should not happen if flow is correct, but safety guard
                 return;
             }
 
@@ -1028,7 +1039,7 @@
         }
         
         /**
-         * Function to handle pronunciation and 2-second delay auto-advance
+         * **FIXED:** Function to handle pronunciation and 2-second delay auto-advance
          */
         function handleEndScreenAdvance() {
             const totalDelay = 4500; // Fixed total delay (e.g., Speech ~2.5s + Pause 2.0s)
@@ -1109,16 +1120,16 @@
             livesLeftEl.textContent = `โอกาส: ${lives}`;
             scoreEl.textContent = `คะแนน: ${totalScore}/${wordQueue.length}`;
             
-            // 4. Update Hints (Reset)
-            hintMeaningDisplayEl.textContent = `[${currentWordDetails.pos}] ${currentWordDetails.descriptiveHint}`; 
-            hintMeaningDisplayEl.style.display = 'none'; // Hide the hint text
-            showHintBtn.style.display = 'inline-block'; // Show the button
-            showHintBtn.disabled = false; // Enable the button
+            // 4. Update Hints (Reset & **BUG FIX 1**)
+            hintMeaningDisplayEl.textContent = `(${currentWordDetails.pos}) ${currentWordDetails.descriptiveHint}`; 
+            hintMeaningDisplayEl.style.display = 'none'; 
+            showHintBtn.style.display = 'inline-block'; // BUG FIX: Ensure button is visible
+            showHintBtn.disabled = false; 
             
             const blankedExample = currentWordDetails.example.replace(new RegExp(currentWordDetails.word, 'gi'), '___');
             hintExampleEl.textContent = blankedExample;
             
-            // 5. Ensure buttons are visible/enabled
+            // 5. Ensure buttons are visible/enabled 
             giveUpBtn.style.display = 'block'; 
             giveUpBtn.disabled = false;
 
@@ -1172,15 +1183,15 @@
             
             showScreen('end-screen');
             
-            // 5. Handle pronunciation
+            // 5. Handle pronunciation and Auto Advance
             if (currentWordDetails && currentWordDetails.word) {
                 const shouldAutoAdvance = isWin && hasNext && isAutoModeActive;
                 
                 if (shouldAutoAdvance) {
-                    // Auto Advance mode: handleEndScreenAdvance manages the speech + next word transition.
+                    // Auto Advance mode: FIXED - Only call this function for smooth speech + transition.
                     handleEndScreenAdvance();
                 } else {
-                    // Manual mode: Read the word after a short delay for browser to establish new screen context.
+                    // Manual mode: Read the word after a short delay for stability.
                     setTimeout(() => {
                         speakText(currentWordDetails.word, 'en-US');
                     }, 50); // 50ms delay
@@ -1252,7 +1263,7 @@
         
         // --- EVENT LISTENERS ---
         
-        // **FIX #1:** Hint Button Logic
+        // **BUG FIX 1:** Hint Button Logic
         showHintBtn.addEventListener('click', () => {
             if (!hintUsed) {
                 hintUsed = true;
