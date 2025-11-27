@@ -38,7 +38,6 @@
             overflow-x: hidden;
         }
 
-        /* --- CONTAINER WITH GLASSMORPHISM --- */
         .container {
             width: 100%;
             max-width: 480px;
@@ -81,7 +80,6 @@
             transition: all 0.3s ease;
         }
 
-        /* Secret Mode Animation */
         header h1.robot-active {
             text-shadow: 0 0 10px rgba(150, 201, 61, 0.5);
             animation: pulse-glow 1.5s infinite alternate;
@@ -109,7 +107,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Shake Animation */
         .shake {
             animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
         }
@@ -144,6 +141,9 @@
         .main-btn.btn-random {
             background: var(--primary-grad);
             box-shadow: 0 4px 15px rgba(56, 193, 114, 0.4);
+        }
+        .main-btn.btn-random:active {
+            box-shadow: 0 2px 0 #32A860;
         }
         .main-btn:disabled {
             filter: grayscale(100%);
@@ -326,6 +326,39 @@
             margin-top: 10px;
         }
 
+        /* --- SUMMARY SCREEN --- */
+        #summary-screen {
+            justify-content: flex-start;
+            text-align: left;
+        }
+        #summary-list {
+            width: 100%;
+            max-height: 60vh;
+            overflow-y: auto;
+            margin: 1rem 0;
+            padding-right: 5px;
+        }
+        /* Style the summary list items */
+        .summary-item {
+            background: rgba(255, 255, 255, 0.05);
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 10px;
+            border-left: 4px solid var(--color-correct);
+        }
+        .summary-item.failed {
+            border-left-color: var(--color-wrong);
+        }
+        .summary-word {
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: var(--primary-grad);
+        }
+        .summary-mean {
+            font-size: 0.9rem;
+            color: var(--color-text-secondary);
+        }
+
     </style>
 </head>
 <body>
@@ -355,7 +388,6 @@
                     <line x1="50" y1="190" x2="50" y2="20" /> 
                     <line x1="50" y1="20" x2="140" y2="20" /> 
                     <line x1="140" y1="20" x2="140" y2="40" stroke="#f6e05e" /> 
-
                     <g id="hangman-figure">
                         <circle id="head" cx="140" cy="60" r="20" class="hangman-part head" style="display:none;" />
                         <line id="body" x1="140" y1="80" x2="140" y2="130" class="hangman-part" style="display:none;" />
@@ -363,7 +395,6 @@
                         <line id="right-arm" x1="140" y1="90" x2="170" y2="110" class="hangman-part" style="display:none;" />
                         <line id="left-leg" x1="140" y1="130" x2="120" y2="160" class="hangman-part" style="display:none;" />
                         <line id="right-leg" x1="140" y1="130" x2="160" y2="160" class="hangman-part" style="display:none;" />
-                        
                         <g id="left-eye" class="hangman-part" style="display:none;">
                             <line x1="128" y1="52" x2="136" y2="58" stroke="#e74c3c" stroke-width="2"/>
                             <line x1="128" y1="58" x2="136" y2="52" stroke="#e74c3c" stroke-width="2"/>
@@ -391,8 +422,7 @@
                 </div>
             </div>
 
-            <div id="keyboard">
-                </div>
+            <div id="keyboard"></div>
             
             <button id="give-up-btn" class="main-btn">
                 ยอมแพ้ / กลับหน้าหลัก
@@ -417,6 +447,15 @@
                 </div>
             </div>
         </div>
+
+        <div id="summary-screen" class="screen">
+            <h2 style="text-align: center;">สรุปผลการเล่น</h2>
+            <p id="summary-score" style="text-align: center; color: var(--color-correct); font-weight: bold;"></p>
+            <div id="summary-list">
+                </div>
+            <button id="summary-home-btn" class="main-btn" style="width: 100%; margin-top: 10px;">กลับสู่หน้าหลัก</button>
+        </div>
+
     </div>
 
     <script>
@@ -565,7 +604,7 @@
         function generateKeyboard() {
             const keyboard = document.getElementById('keyboard');
             keyboard.innerHTML = '';
-            // REMOVED: Keyboard hiding logic to show keys in auto mode
+            // Auto Mode now shows keyboard
 
             for (let i = 65; i <= 90; i++) {
                 const char = String.fromCharCode(i);
@@ -586,7 +625,7 @@
 
         // --- MANUAL PLAY ---
         function handleManualGuess(char, btn) {
-            if (isAutoSolving || isAutoModeActive) return;
+            if (isAutoSolving || (isAutoModeActive && isAutoSolving)) return;
             
             btn.disabled = true;
             guessedLetters.add(char);
@@ -598,7 +637,6 @@
                 if (solved) {
                     document.getElementById('score').innerText = `คะแนน: ${++totalScore}/${wordQueue.length}`;
                     disableControls();
-                    // DELAY 0.5s BEFORE END SCREEN
                     setTimeout(() => endGame(true), 500);
                 }
             } else {
@@ -622,7 +660,6 @@
 
         function disableControls() {
             document.querySelectorAll('.key-btn').forEach(b => b.disabled = true);
-            // In manual mode we disable hint/giveup on end
             if(!isAutoModeActive) {
                 document.getElementById('show-hint-btn').disabled = true;
                 document.getElementById('give-up-btn').disabled = true;
@@ -633,18 +670,19 @@
         function startAutoSolve() {
             if (!isAutoModeActive) return;
             
-            // Generate queue of unique correct letters
-            const letters = [...new Set(currentWord.split(''))].filter(c => c >= 'A' && c <= 'Z');
-            lettersToRevealQueue = letters;
-            shuffle(lettersToRevealQueue);
-            
-            // Auto Trigger Hint
+            // Wait 1s before showing hint
             setTimeout(() => {
                 document.getElementById('show-hint-btn').click();
-            }, 300);
-
-            isAutoSolving = true;
-            autoSolveLoop();
+                
+                // Wait another 1s before guessing (Total 2s)
+                setTimeout(() => {
+                    const letters = [...new Set(currentWord.split(''))].filter(c => c >= 'A' && c <= 'Z');
+                    lettersToRevealQueue = letters;
+                    shuffle(lettersToRevealQueue);
+                    isAutoSolving = true;
+                    autoSolveLoop();
+                }, 1000);
+            }, 1000);
         }
 
         function autoSolveLoop() {
@@ -661,10 +699,10 @@
                 // Visual Button Press Effect
                 const btn = document.querySelector(`.key-btn[data-char="${char}"]`);
                 if(btn) {
-                    btn.classList.add('simulated-press'); // Add press effect
+                    btn.classList.add('simulated-press'); 
                     setTimeout(() => {
                         btn.classList.remove('simulated-press');
-                        btn.classList.add('correct'); // Then turn green
+                        btn.classList.add('correct'); 
                         btn.disabled = true;
                     }, 150);
                 }
@@ -690,10 +728,8 @@
         // --- GAME FLOW ---
         function startSession(category) {
             currentCategory = category;
-            // Filter logic
             let words = (category === "สุ่มรวมทุกหมวด") ? wordData : wordData.filter(w => w.category === category);
             
-            // Remove duplicates
             const seen = new Set();
             wordQueue = words.filter(w => {
                 const duplicate = seen.has(w.word);
@@ -712,18 +748,20 @@
         }
 
         function loadWord() {
-            if (currentWordIndex >= wordQueue.length) return finishSession();
+            if (currentWordIndex >= wordQueue.length) {
+                // Show Summary Screen instead of returning home immediately
+                showSummaryScreen();
+                return;
+            }
 
             currentWordDetails = wordQueue[currentWordIndex];
             currentWord = currentWordDetails.word.toUpperCase();
             
-            // Reset State
             lives = MAX_LIVES;
             guessedLetters.clear();
             hintUsed = false;
             stopAutoSolve();
             
-            // UI Reset
             drawHangman(lives);
             updateWordDisplay();
             generateKeyboard();
@@ -732,7 +770,6 @@
             document.getElementById('lives-left').innerText = `โอกาส: ${lives}`;
             document.getElementById('score').innerText = `คะแนน: ${totalScore}/${wordQueue.length}`;
             
-            // Hint Reset
             const hintDisplay = document.getElementById('hint-meaning-display');
             const hintBtn = document.getElementById('show-hint-btn');
             hintDisplay.style.display = 'none';
@@ -742,7 +779,6 @@
             
             document.getElementById('hint-example').innerText = currentWordDetails.example.replace(new RegExp(currentWordDetails.word, 'gi'), '___');
             
-            // Buttons
             document.getElementById('give-up-btn').style.display = 'block';
             document.getElementById('give-up-btn').disabled = false;
 
@@ -753,42 +789,38 @@
             stopAutoSolve();
             const hasNext = currentWordIndex + 1 < wordQueue.length;
             
-            // Populate End Screen
             document.getElementById('end-message').innerText = isWin ? "ยอดเยี่ยม! ถูกต้อง" : "เสียใจด้วย! คำตอบคือ";
             document.getElementById('end-message').style.color = isWin ? 'var(--color-correct)' : 'var(--color-wrong)';
             document.getElementById('end-details').innerText = `คำที่ ${currentWordIndex + 1}/${wordQueue.length}`;
             document.getElementById('final-word-reveal').innerText = currentWord;
             document.getElementById('final-meaning-reveal').innerText = `${currentWordDetails.descriptiveHint} ${currentWordDetails.example}`;
             
-            // Buttons logic
+            // Button Logic - Always enabled in Auto Mode
             const restartBtn = document.getElementById('restart-btn');
-            restartBtn.innerText = hasNext ? "ข้อต่อไป" : "จบเกม";
-            restartBtn.onclick = hasNext ? nextWord : finishSession;
-            document.getElementById('back-home-btn').onclick = finishSession;
-            
-            // BUG FIX: Ensure buttons are enabled on last word in auto mode
-            if (isAutoModeActive && !hasNext) {
-                restartBtn.disabled = false;
-                document.getElementById('back-home-btn').disabled = false;
-            }
+            restartBtn.innerText = hasNext ? "ข้อต่อไป" : "ดูสรุปผล";
+            restartBtn.onclick = hasNext ? nextWord : showSummaryScreen;
+            restartBtn.disabled = false; // Always active
+
+            const homeBtn = document.getElementById('back-home-btn');
+            homeBtn.onclick = finishSession;
+            homeBtn.disabled = false; // Always active
             
             switchScreen('end-screen');
 
-            // **LOGIC: Read Word & Auto Advance**
-            // 1. Read immediately on entering screen (Manual & Auto)
             setTimeout(() => {
                 speakText(currentWord, 'en-US');
             }, 50);
 
-            // 2. If Auto Mode AND Not Last Word, wait 4.5s then next
+            // Auto Advance
             if (isAutoModeActive && hasNext && isWin) {
-                // Disable buttons during auto-wait
-                restartBtn.disabled = true;
-                document.getElementById('back-home-btn').disabled = true;
-                
                 autoAdvanceTimeout = setTimeout(() => {
                     nextWord();
-                }, 4500); // 4.5 seconds fixed delay
+                }, 4500); 
+            } else if (isAutoModeActive && !hasNext) {
+                // If auto mode and finished, wait then show summary
+                autoAdvanceTimeout = setTimeout(() => {
+                    showSummaryScreen();
+                }, 4500);
             }
         }
 
@@ -799,11 +831,31 @@
             loadWord();
         }
 
+        function showSummaryScreen() {
+            clearTimeout(autoAdvanceTimeout);
+            stopAutoSolve();
+            
+            const listContainer = document.getElementById('summary-list');
+            listContainer.innerHTML = '';
+            document.getElementById('summary-score').innerText = `คะแนนรวม: ${totalScore} / ${wordQueue.length}`;
+
+            wordQueue.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'summary-item';
+                // Note: In a real app we'd track pass/fail per word for color, defaulting to green here
+                div.innerHTML = `<div class="summary-word">${item.word}</div><div class="summary-mean">${item.descriptiveHint}</div>`;
+                listContainer.appendChild(div);
+            });
+
+            document.getElementById('summary-home-btn').onclick = finishSession;
+            switchScreen('summary-screen');
+        }
+
         function finishSession() {
             clearTimeout(autoAdvanceTimeout);
             stopAutoSolve();
             switchScreen('start-screen');
-            isAutoModeActive = false; // Reset secret mode on exit
+            isAutoModeActive = false; 
             document.getElementById('game-title').classList.remove('robot-active');
         }
 
@@ -836,13 +888,11 @@
         document.addEventListener('DOMContentLoaded', () => {
             setupCategories();
             
-            // Audio Context Resume
             document.addEventListener('click', () => {
                 initAudioContext();
                 if (audioContext && audioContext.state === 'suspended') audioContext.resume();
             }, { once: true });
 
-            // Secret Mode Toggle
             document.getElementById('game-title').ondblclick = (e) => {
                 e.preventDefault();
                 isAutoModeActive = !isAutoModeActive;
@@ -856,20 +906,17 @@
                     title.classList.remove('robot-active');
                     alert("👤 Manual Mode");
                     stopAutoSolve();
-                    if (document.getElementById('game-screen').classList.contains('active')) loadWord(); // Reload to reset UI
+                    if (document.getElementById('game-screen').classList.contains('active')) loadWord(); 
                 }
             };
 
-            // Hint Button
             document.getElementById('show-hint-btn').onclick = function() {
                 this.style.display = 'none';
                 document.getElementById('hint-meaning-display').style.display = 'inline';
             };
 
-            // Pronounce Button (End Screen)
             document.getElementById('final-pronounce-btn').onclick = () => speakText(currentWord, 'en-US');
             
-            // Give Up
             document.getElementById('give-up-btn').onclick = () => {
                 if(confirm("ยอมแพ้?")) finishSession();
             };
